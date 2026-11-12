@@ -1,0 +1,47 @@
+# ===== Visual Studio =====
+.vs/
+*.suo
+*.user
+*.aps
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+
+# ===== 编译产物 =====
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+*.obj
+*.ilk
+*.pdb
+*.idb
+*.exp
+*.lastbuildstate
+*.tlog
+*.log
+
+# ===== CMake 生成物 =====
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+ZERO_CHECK.*
+ALL_BUILD.*
+
+# ===== 引擎与预编译库（体积过大，不入库）=====
+cocos2d/
+proj.win32/engine/
+proj.win32/lib/
+
+# ===== 运行输出（含 exe / dll / 素材副本）=====
+proj.win32/bin/
+
+# ===== 存档与演示视频 =====
+UserDefault.xml
+Replay.mp4
+
+# ===== 系统文件 =====
+Thumbs.db
+desktop.ini
+.DS_Store
