@@ -1,33 +1,34 @@
-#include "MenuScene.h"
+ï»¿#include "MenuScene.h"
 #include "OptionsScene.h"
 #include "HelperScene.h"
 #include "GameSelectionScene.h"
 #include"sound&music.h"
 #include"GameData.h"
+#include"SaveManager.h"
 USING_NS_CC;
-/*´íÎó´¦Àí*/
+/*é”™è¯¯å¤„ç†*/
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
 }
-/************************************  MenuSceneÀà  *********************************/
+/************************************  MenuSceneç±»  *********************************/
 Scene* MenuScene::createScene()
 {
     return MenuScene::create();
 }
-/*³õÊ¼»¯*/
+/*åˆå§‹åŒ–*/
 bool MenuScene::init()
 {
-    /*³õÊ¼»¯³¡¾°*/
+    /*åˆå§‹åŒ–åœºæ™¯*/
     if (!Scene::init())
     {
         return false;
     }
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /*****************************************±³¾°Í¼**************************************************/
-    auto background_image = Sprite::create("/MenuScene/MainBG.PNG");//±³¾°Í¼
+    /*****************************************èƒŒæ™¯å›¾**************************************************/
+    auto background_image = Sprite::create("/MenuScene/MainBG.PNG");//èƒŒæ™¯å›¾
     if (background_image == nullptr)
     {
         problemLoading("'MainBG.PNG'");
@@ -39,10 +40,10 @@ bool MenuScene::init()
 
         this->addChild(background_image);
     }
-    /******************************************ÔÆ*******************************************************/
+    /******************************************äº‘*******************************************************/
     auto cloud = Sprite::create();
     cloud->setName("Cloud");
-    //´óÔÆ
+    //å¤§äº‘
     auto cloud1 = Sprite::create("/MenuScene/Cloud.PNG");
     if (cloud1 == nullptr)
     {
@@ -53,18 +54,18 @@ bool MenuScene::init()
         cloud1->setPosition(Vec2(origin.x - cloud1->getContentSize().width,
             origin.y + visibleSize.height * 0.85));
         cloud1->setOpacity(230);
-        //Ìí¼Ó¶¯»­
-        //´Ó×óÏòÓÒÆ®
+        //æ·»åŠ åŠ¨ç”»
+        //ä»å·¦å‘å³é£˜
         auto cloud1_moveto_1 = MoveTo::create(20, Vec2(origin.x + visibleSize.width + cloud1->getContentSize().width, origin.y + visibleSize.height * 0.85));
-        //´ÓÓÒÏò×óÆ®
+        //ä»å³å‘å·¦é£˜
         auto cloud1_moveto_2 = MoveTo::create(20, Vec2(origin.x - cloud1->getContentSize().width, origin.y + visibleSize.height * 0.85));
-        //¶¯×÷ĞòÁĞ£¬ÏÈ´Ó×óµ½ÓÒ£¬ÔÙÍ£5s£¬ÔÙ´ÓÓÒÏò×ó£¬ÔÙÍ£5s
+        //åŠ¨ä½œåºåˆ—ï¼Œå…ˆä»å·¦åˆ°å³ï¼Œå†åœ5sï¼Œå†ä»å³å‘å·¦ï¼Œå†åœ5s
         auto cloud1_sequence = Sequence::create(cloud1_moveto_1, DelayTime::create(5), cloud1_moveto_2, DelayTime::create(5),nullptr);
-        //ÎŞÏŞÑ­»·²¥·Å¶¯×÷ĞòÁĞ
+        //æ— é™å¾ªç¯æ’­æ”¾åŠ¨ä½œåºåˆ—
         cloud1->runAction(RepeatForever::create(cloud1_sequence));
         cloud->addChild(cloud1);
     }
-    //Ğ¡ÔÆ
+    //å°äº‘
     auto cloud2 = Sprite::create("/MenuScene/Cloud2.PNG");
     if (cloud2 == nullptr)
     {
@@ -76,20 +77,20 @@ bool MenuScene::init()
             origin.y + visibleSize.height * 0.8));
         cloud2->setScale(2);
         cloud2->setOpacity(230);
-        //Ìí¼Ó¶¯»­
-        //´ÓÓÒÏò×ó
+        //æ·»åŠ åŠ¨ç”»
+        //ä»å³å‘å·¦
         auto cloud2_moveto_1 = MoveTo::create(20, Vec2(origin.x - cloud2->getContentSize().width, origin.y + visibleSize.height * 0.85));
-        //´Ó×óÏòÓÒ
+        //ä»å·¦å‘å³
         auto cloud2_moveto_2 = MoveTo::create(20, Vec2(origin.x + visibleSize.width + cloud2->getContentSize().width, origin.y + visibleSize.height * 0.85));
-        //¶¯×÷ĞòÁĞ£¬ÏÈ´ÓÓÒÏò×ó£¬ÔÙÍ£5s£¬ÔÙ´Ó×óÏòÓÒ£¬ÔÙÍ£5s
+        //åŠ¨ä½œåºåˆ—ï¼Œå…ˆä»å³å‘å·¦ï¼Œå†åœ5sï¼Œå†ä»å·¦å‘å³ï¼Œå†åœ5s
         auto cloud2_sequence = Sequence::create(cloud2_moveto_1, DelayTime::create(5), cloud2_moveto_2, DelayTime::create(5),nullptr);
-        //ÎŞÏŞÑ­»·²¥·Å¶¯×÷ĞòÁĞ
+        //æ— é™å¾ªç¯æ’­æ”¾åŠ¨ä½œåºåˆ—
         cloud2->runAction(RepeatForever::create(cloud2_sequence));
         cloud->addChild(cloud2);
     }
 
     this->addChild(cloud);
-    /*****************************************************Ìí¼Ó¹ÖÎïÍ¼ĞÎ****************************************************/
+    /*****************************************************æ·»åŠ æ€ªç‰©å›¾å½¢****************************************************/
     auto monster = Sprite::create("/MenuScene/FlyMonster.PNG");
     if (monster == nullptr) {
         problemLoading("'FlyMonster.PNG'");
@@ -97,22 +98,22 @@ bool MenuScene::init()
     else {
         monster->setPosition(Vec2(origin.x + visibleSize.width / 4,
             origin.y + visibleSize.height * 0.8));
-        //Ìí¼Ó¶¯×÷
-        //´ÓÉÏÏòÏÂ
+        //æ·»åŠ åŠ¨ä½œ
+        //ä»ä¸Šå‘ä¸‹
         auto monster_moveby_down = MoveBy::create(1.0f, Vec2(0, -monster->getContentSize().height / 4));
-        //´ÓÏÂÏòÉÏ
+        //ä»ä¸‹å‘ä¸Š
         auto monster_moveby_up = MoveBy::create(1.0f, Vec2(0, monster->getContentSize().height / 4));
-        //¶¯×÷ĞòÁĞ£¬´ÓÉÏµ½ÏÂ£¬ÔÙ´ÓÏÂµ½ÉÏ·µ»ØÔ­µã
+        //åŠ¨ä½œåºåˆ—ï¼Œä»ä¸Šåˆ°ä¸‹ï¼Œå†ä»ä¸‹åˆ°ä¸Šè¿”å›åŸç‚¹
         auto monster_sequence = Sequence::createWithTwoActions(monster_moveby_down, monster_moveby_up);
-        //ÎŞÏŞÑ­»·²¥·Å¶¯×÷ĞòÁĞ
+        //æ— é™å¾ªç¯æ’­æ”¾åŠ¨ä½œåºåˆ—
         monster->runAction(RepeatForever::create(monster_sequence));
         this->addChild(monster);
     }
-    /****************************************************Ìí¼ÓÂÜ²·Í¼ĞÎ*****************************************************/
+    /****************************************************æ·»åŠ èåœå›¾å½¢*****************************************************/
     auto carrot = Sprite::create();
     carrot->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 4));
-    //1,Ìí¼ÓÂÜ²·Ò¶×Ó
+    //1,æ·»åŠ èåœå¶å­
     auto carrot_leaf1 = Sprite::create("/MenuScene/Leaf1.PNG");
     if (carrot_leaf1 == nullptr)
     {
@@ -151,7 +152,7 @@ bool MenuScene::init()
         carrot->addChild(carrot_leaf3);
     }
 
-    //2,Ìí¼ÓÂÜ²·Ö÷Ìå
+    //2,æ·»åŠ èåœä¸»ä½“
     auto carrot_body = Sprite::create("/MenuScene/CarrotBody.PNG");
     if (carrot_body == nullptr)
     {
@@ -166,24 +167,24 @@ bool MenuScene::init()
     }
 
     this->addChild(carrot);
-    //ÂÜ²·¶¯»­Ìí¼Ó
+    //èåœåŠ¨ç”»æ·»åŠ 
     carrot->setScale(0.1);
-    //Ã¿´ÎÇĞ»»µ½Ö÷²Ëµ¥Ê±£¬ÂÜ²·±Ä³ö£¬Í¨¹ıËõ·Å¶¯»­À´ÊµÏÖ
+    //æ¯æ¬¡åˆ‡æ¢åˆ°ä¸»èœå•æ—¶ï¼Œèåœè¹¦å‡ºï¼Œé€šè¿‡ç¼©æ”¾åŠ¨ç”»æ¥å®ç°
     auto carrot_start_scale = ScaleTo::create(0.3, 1);
     carrot->runAction(carrot_start_scale);
 
-    //ÂÜ²·Ò¶×Ó2µÄ¶¯×÷ĞòÁĞ£¬Í¨¹ıĞı×ªÀ´ÊµÏÖÒ¶×Ó»Î¶¯
+    //èåœå¶å­2çš„åŠ¨ä½œåºåˆ—ï¼Œé€šè¿‡æ—‹è½¬æ¥å®ç°å¶å­æ™ƒåŠ¨
     auto carrot_leaf2_sequence = Sequence::create(DelayTime::create(5), RotateBy::create(0.2, 30), RotateBy::create(0.2, -30), 
         RotateBy::create(0.2, 30),RotateBy::create(0.2, -30), DelayTime::create(5), nullptr);
-    //ÎŞÏŞÑ­»·¶¯×÷ĞòÁĞ
+    //æ— é™å¾ªç¯åŠ¨ä½œåºåˆ—
     carrot_leaf2->runAction(RepeatForever::create(carrot_leaf2_sequence));
 
-    //ÂÜ²·Ò¶×Ó3µÄ¶¯×÷ĞòÁĞ£¬Í¨¹ıĞı×ªÀ´ÊµÏÖÒ¶×Ó»Î¶¯
+    //èåœå¶å­3çš„åŠ¨ä½œåºåˆ—ï¼Œé€šè¿‡æ—‹è½¬æ¥å®ç°å¶å­æ™ƒåŠ¨
     auto carrot_leaf3_sequence = Sequence::create(DelayTime::create(7), RotateBy::create(0.2, 30), RotateBy::create(0.2, -30),
         RotateBy::create(0.2, 30), RotateBy::create(0.2, -30), DelayTime::create(3), nullptr);
-    //ÎŞÏŞÑ­»·¶¯×÷ĞòÁĞ
+    //æ— é™å¾ªç¯åŠ¨ä½œåºåˆ—
     carrot_leaf3->runAction(RepeatForever::create(carrot_leaf3_sequence));
-    /*************************************************************Ìí¼Ó±£ÎÀÂÜ²·±êÌâ******************************************************************/
+    /*************************************************************æ·»åŠ ä¿å«èåœæ ‡é¢˜******************************************************************/
     auto title = Sprite::create("/MenuScene/MainTitle.PNG");
     if (title == nullptr) {
         problemLoading("'MainTitle.PNG'");
@@ -193,10 +194,10 @@ bool MenuScene::init()
             origin.y + visibleSize.height / 2 - title->getContentSize().height / 7));
         this->addChild(title);
     }
-    /*****************************************************************²Ëµ¥½çÃæ************************************************************************/
+    /*****************************************************************èœå•ç•Œé¢************************************************************************/
     auto menu = Menu::create();
     menu->setPosition(Vec2::ZERO);
-    //ÍË³öÓÎÏ·°´Å¥
+    //é€€å‡ºæ¸¸æˆæŒ‰é’®
     auto close_item = MenuItemFont::create("EXIT", CC_CALLBACK_1(MenuScene::close_game, this));
     if (close_item == nullptr) {
         problemLoading("'EXIT'");
@@ -206,7 +207,7 @@ bool MenuScene::init()
             origin.y + visibleSize.height - close_item->getContentSize().height / 2));
         menu->addChild(close_item);
     }
-    //ÉèÖÃ°´Å¥
+    //è®¾ç½®æŒ‰é’®
     auto options_item = MenuItemImage::create("/MenuScene/Btn_Set.PNG", "/MenuScene/Btn_SetLight.PNG", CC_CALLBACK_1(MenuScene::goto_options, this));
     if (options_item == nullptr) {
         problemLoading("'options_item'");
@@ -216,7 +217,7 @@ bool MenuScene::init()
             origin.y + visibleSize.height / 3));
         menu->addChild(options_item);
     }
-    //°ïÖú°´Å¥
+    //å¸®åŠ©æŒ‰é’®
     auto helper_item = MenuItemImage::create("/MenuScene/Btn_Help.PNG", "/MenuScene/Btn_HelpLight.PNG", CC_CALLBACK_1(MenuScene::goto_helper, this));
     if (helper_item == nullptr) {
         problemLoading("'helper_item'");
@@ -226,7 +227,7 @@ bool MenuScene::init()
             origin.y + visibleSize.height / 3));
         menu->addChild(helper_item);
     }
-    //Ã°ÏÕÄ£Ê½
+    //å†’é™©æ¨¡å¼
     auto adventure_item = MenuItemImage::create("/MenuScene/Btn_NormalModle.PNG", "/MenuScene/Btn_NormalModleLight.PNG", CC_CALLBACK_1(MenuScene::goto_adventure, this));
     if (adventure_item == nullptr) {
         problemLoading("'adventure_item'");
@@ -237,7 +238,7 @@ bool MenuScene::init()
             origin.y + visibleSize.height / 8));
         menu->addChild(adventure_item);
     }
-    //BOSSÄ£Ê½
+    //BOSSæ¨¡å¼
     auto boss_item = MenuItemImage::create("/MenuScene/Btn_Boss.PNG", "/MenuScene/Btn_BossLight.PNG", CC_CALLBACK_1(MenuScene::goto_boss, this));
     if (boss_item == nullptr) {
         problemLoading("'boss_item'");
@@ -247,7 +248,7 @@ bool MenuScene::init()
         boss_item->setPosition(Vec2(origin.x + visibleSize.width / 2,
             origin.y + visibleSize.height / 8));
         menu->addChild(boss_item);
-        if (UserDefault::getInstance()->getIntegerForKey("if_boss_lock") == 1) {//ÈôbossÄ£Ê½Î´½âËø£¬ÔòÉú³ÉÒ»¸ö¡°Ëø¡±µÄÍ¼ĞÎ
+        if (!SaveManager::getInstance()->isBossUnlocked()) {//è‹¥bossæ¨¡å¼æœªè§£é”ï¼Œåˆ™ç”Ÿæˆä¸€ä¸ªâ€œé”â€çš„å›¾å½¢
             auto boss_lock = Sprite::create("/MenuScene/lock.png");
             if (boss_lock == nullptr) {
                 problemLoading("'lock.png'");
@@ -261,7 +262,7 @@ bool MenuScene::init()
             }
         }
     }
-    //¹ÖÎï³²
+    //æ€ªç‰©å·¢
     auto nest_item = MenuItemImage::create("/MenuScene/Btn_MonsterNest.PNG", "/MenuScene/Btn_MonsterNestLight.PNG", CC_CALLBACK_1(MenuScene::goto_nest, this));
     if (nest_item == nullptr) {
         problemLoading("'nest_item'");
@@ -271,7 +272,7 @@ bool MenuScene::init()
         nest_item->setPosition(Vec2(origin.x + visibleSize.width / 2 + nest_item->getContentSize().width,
             origin.y + visibleSize.height / 8));
         menu->addChild(nest_item);
-        if (UserDefault::getInstance()->getIntegerForKey("if_nest_lock") == 1) {//Èô¹ÖÎïÎÑÎ´½âËø£¬ÔòÉú³ÉÒ»¸ö¡°Ëø¡±µÄÍ¼ĞÎ
+        if (!SaveManager::getInstance()->isNestUnlocked()) {//è‹¥æ€ªç‰©çªæœªè§£é”ï¼Œåˆ™ç”Ÿæˆä¸€ä¸ªâ€œé”â€çš„å›¾å½¢
             auto nest_lock = Sprite::create("/MenuScene/lock.png");
             if (nest_lock == nullptr) {
                 problemLoading("'lock.png'");
@@ -289,51 +290,52 @@ bool MenuScene::init()
 
     return true;
 }
-//¹Ø±ÕÓÎÏ·
+//å…³é—­æ¸¸æˆ
 void MenuScene::close_game(Ref* psender) {
 
-    AudioEngine::end();//¹Ø±ÕÉùÒôÒıÇæ
-    Director::getInstance()->end();//Director¿ØÖÆ½áÊø
+    SaveManager::getInstance()->flush();
+    AudioEngine::end();//å…³é—­å£°éŸ³å¼•æ“
+    Director::getInstance()->end();//Directoræ§åˆ¶ç»“æŸ
 
-    exit(0);//ÍË³ö³ÌĞò
+    exit(0);//é€€å‡ºç¨‹åº
 }
-//È¥ÉèÖÃ½çÃæ
+//å»è®¾ç½®ç•Œé¢
 void  MenuScene::goto_options(Ref* pSender) {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    auto options_scene = OptionsScene::createScene();//´´½¨ÉèÖÃ½çÃæ³¡¾°
-    Director::getInstance()->replaceScene(TransitionSlideInT::create(0.2, options_scene));//ÒÔ´ÓÉÏÏòÏÂ»¬¶¯·½Ê½ÇĞ»»
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    auto options_scene = OptionsScene::createScene();//åˆ›å»ºè®¾ç½®ç•Œé¢åœºæ™¯
+    Director::getInstance()->replaceScene(TransitionSlideInT::create(0.2, options_scene));//ä»¥ä»ä¸Šå‘ä¸‹æ»‘åŠ¨æ–¹å¼åˆ‡æ¢
 }
-//È¥°ïÖú½çÃæ
+//å»å¸®åŠ©ç•Œé¢
 void  MenuScene::goto_helper(Ref* pSender) {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    auto helper_scene = HelperScene::createScene();//´´½¨°ïÖú³¡¾°
-    Director::getInstance()->replaceScene(TransitionSlideInB::create(0.2, helper_scene));//ÒÔ´ÓÏÂÖÁÉÏ»¬¶¯µÄ·½Ê½ÇĞ»»
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    auto helper_scene = HelperScene::createScene();//åˆ›å»ºå¸®åŠ©åœºæ™¯
+    Director::getInstance()->replaceScene(TransitionSlideInB::create(0.2, helper_scene));//ä»¥ä»ä¸‹è‡³ä¸Šæ»‘åŠ¨çš„æ–¹å¼åˆ‡æ¢
 }
-//È¥Ã°ÏÕÄ£Ê½
+//å»å†’é™©æ¨¡å¼
 void  MenuScene::goto_adventure(Ref* psender) {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    auto gameselection_scene = GameSelectionScene::createScene();//´´½¨Ã°ÏÕÄ£Ê½Ñ¡¹Ø³¡¾°
-    Director::getInstance()->replaceScene(TransitionFlipAngular::create(0.2, gameselection_scene));//ÒÔ¶Ô½ÇÏß·­×ªµÄĞÎÊ½ÇĞ»»
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    auto gameselection_scene = GameSelectionScene::createScene();//åˆ›å»ºå†’é™©æ¨¡å¼é€‰å…³åœºæ™¯
+    Director::getInstance()->replaceScene(TransitionFlipAngular::create(0.2, gameselection_scene));//ä»¥å¯¹è§’çº¿ç¿»è½¬çš„å½¢å¼åˆ‡æ¢
 }
-//È¥bossÄ£Ê½
+//å»bossæ¨¡å¼
 void  MenuScene::goto_boss(Ref* psender) {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    if (UserDefault::getInstance()->getIntegerForKey("if_boss_lock") == 1) {//ÈôbossÄ£Ê½Î´½âËø
-        //»ñÈ¡ÆÁÄ»´óĞ¡
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    if (!SaveManager::getInstance()->isBossUnlocked()) {//è‹¥bossæ¨¡å¼æœªè§£é”
+        //è·å–å±å¹•å¤§å°
         auto visibleSize = Director::getInstance()->getVisibleSize();
         Vec2 origin = Director::getInstance()->getVisibleOrigin();
-        /*****************************  ´¿É«²ã  ******************************************/
+        /*****************************  çº¯è‰²å±‚  ******************************************/
         auto black_layer = LayerColor::create(Color4B::BLACK);
         black_layer->setOpacity(85);
 
         auto listener = EventListenerTouchOneByOne::create();
-        listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {//¶Ô´¥ÃşÊÂ¼şÍÌÃ»£¨±ØĞë°´È·ÈÏ¼ü²Å¿É·µ»Ø£©
+        listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {//å¯¹è§¦æ‘¸äº‹ä»¶åæ²¡ï¼ˆå¿…é¡»æŒ‰ç¡®è®¤é”®æ‰å¯è¿”å›ï¼‰
             return true;
         };
         listener->setSwallowTouches(true);
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-        /********************************  ±³¾°  *****************************************/
-        auto boss_lock_image = Sprite::create("/MenuScene/boss_lock_image.png");//bossÄ£Ê½Î´½âËøµÄÍ¼Æ¬ÌáÊ¾
+        /********************************  èƒŒæ™¯  *****************************************/
+        auto boss_lock_image = Sprite::create("/MenuScene/boss_lock_image.png");//bossæ¨¡å¼æœªè§£é”çš„å›¾ç‰‡æç¤º
         if (boss_lock_image == nullptr) {
             problemLoading("'boss_lock_image.png'");
         }
@@ -341,18 +343,18 @@ void  MenuScene::goto_boss(Ref* psender) {
             origin.y + visibleSize.height / 2));
         boss_lock_image->setScale(1.4);
         black_layer->addChild(boss_lock_image);
-        /********************************  °´Å¥  ****************************************/
+        /********************************  æŒ‰é’®  ****************************************/
         auto menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
 
-        auto lock_btn = MenuItemImage::create("/MenuScene/lock_btn_normal.png", "/MenuScene/lock_btn_selected.png");//È·¶¨°´Å¥
+        auto lock_btn = MenuItemImage::create("/MenuScene/lock_btn_normal.png", "/MenuScene/lock_btn_selected.png");//ç¡®å®šæŒ‰é’®
         if (lock_btn == nullptr) {
             problemLoading("lock_btn_normal.png||lock_btn_selected.png");
         }
         lock_btn->setPosition(Vec2(origin.x + visibleSize.width *0.55,
             origin.y + visibleSize.height * 0.4));
-        lock_btn->setCallback([this,black_layer](Ref* psender) {//»Øµ÷º¯Êı£¬·µ»ØÉÏMenuScene
-            button_sound_effect();//²¥·ÅÒôĞ§
+        lock_btn->setCallback([this,black_layer](Ref* psender) {//å›è°ƒå‡½æ•°ï¼Œè¿”å›ä¸ŠMenuScene
+            button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
             this->removeChild(black_layer);
         });
         lock_btn->setScale(1.4);
@@ -361,29 +363,27 @@ void  MenuScene::goto_boss(Ref* psender) {
 
         this->addChild(black_layer,2);
     }
-    else {
-        ;//boss_pattern´ı¿ª·¢
-    }
+    //è§£é”æ¡ä»¶å¾…ç©æ³•æ¥å…¥
 }
-//È¥¹ÖÎïÎÑ
+//å»æ€ªç‰©çª
 void  MenuScene::goto_nest(Ref* psender) {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    if (UserDefault::getInstance()->getIntegerForKey("if_nest_lock") == 1) {//Èô¹ÖÎïÎÑÎ´½âËø
-        //»ñÈ¡ÆÁÄ»´óĞ¡
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    if (!SaveManager::getInstance()->isNestUnlocked()) {//è‹¥æ€ªç‰©çªæœªè§£é”
+        //è·å–å±å¹•å¤§å°
         auto visibleSize = Director::getInstance()->getVisibleSize();
         Vec2 origin = Director::getInstance()->getVisibleOrigin();
-        /*****************************  ´¿É«²ã  ******************************************/
+        /*****************************  çº¯è‰²å±‚  ******************************************/
         auto black_layer = LayerColor::create(Color4B::BLACK);
         black_layer->setOpacity(85);
 
         auto listener = EventListenerTouchOneByOne::create();
-        listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {//¶Ô´¥ÃşÊÂ¼şÍÌÃ»£¨±ØĞë°´È·¶¨°´Å¥²ÅÄÜ·µ»Ø£©
+        listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {//å¯¹è§¦æ‘¸äº‹ä»¶åæ²¡ï¼ˆå¿…é¡»æŒ‰ç¡®å®šæŒ‰é’®æ‰èƒ½è¿”å›ï¼‰
             return true;
         };
         listener->setSwallowTouches(true);
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-        /********************************  ±³¾°  *****************************************/
-        auto nest_lock_image = Sprite::create("/MenuScene/nest_lock_image.png");//¹ÖÎïÎÑÎ´½âËøÍ¼Æ¬ÌáÊ¾
+        /********************************  èƒŒæ™¯  *****************************************/
+        auto nest_lock_image = Sprite::create("/MenuScene/nest_lock_image.png");//æ€ªç‰©çªæœªè§£é”å›¾ç‰‡æç¤º
         if (nest_lock_image == nullptr) {
             problemLoading("'nest_lock_image.png'");
         }
@@ -391,11 +391,11 @@ void  MenuScene::goto_nest(Ref* psender) {
             origin.y + visibleSize.height / 2));
         nest_lock_image->setScale(1.4);
         black_layer->addChild(nest_lock_image);
-        /********************************  °´Å¥  ****************************************/
+        /********************************  æŒ‰é’®  ****************************************/
         auto menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
 
-        auto lock_btn = MenuItemImage::create("/MenuScene/lock_btn_normal.png", "/MenuScene/lock_btn_selected.png");//È·¶¨°´Å¥
+        auto lock_btn = MenuItemImage::create("/MenuScene/lock_btn_normal.png", "/MenuScene/lock_btn_selected.png");//ç¡®å®šæŒ‰é’®
         if (lock_btn == nullptr) {
             problemLoading("lock_btn_normal.png||lock_btn_selected.png");
         }
@@ -411,7 +411,5 @@ void  MenuScene::goto_nest(Ref* psender) {
 
         this->addChild(black_layer, 2);
     }
-    else {
-        ;//nest_pattern´ı¿ª·¢
-    }
+    //è§£é”æ¡ä»¶å¾…ç©æ³•æ¥å…¥
 }

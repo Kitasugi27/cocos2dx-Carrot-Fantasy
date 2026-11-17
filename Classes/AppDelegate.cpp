@@ -1,7 +1,8 @@
-#include "AppDelegate.h"
+ï»¿#include "AppDelegate.h"
 #include "MenuScene.h"
 #include "AudioEngine.h"
 #include "GameData.h"
+#include "SaveManager.h"
 // #define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
@@ -22,6 +23,7 @@ AppDelegate::AppDelegate()
 
 AppDelegate::~AppDelegate() 
 {
+    SaveManager::getInstance()->flush();
 #if USE_AUDIO_ENGINE
     AudioEngine::end();
 #endif
@@ -83,12 +85,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
     register_all_packages();
 
-    //ÉèÖÃ´æµµµØÖ·£¨´æµµÏà¹ØÇëÌø×ªÖÁGameData.h£©
+    //è®¾ç½®å­˜æ¡£åœ°å€ï¼ˆå­˜æ¡£ç›¸å…³è¯·è·³è½¬è‡³GameData.hï¼‰
     FileUtils::getInstance()->setWritablePath(FileUtils::getInstance()->getDefaultResourceRootPath()+"../");
-    //³õÊ¼»¯´æµµÊý¾Ý
+    //åˆå§‹åŒ–å­˜æ¡£æ•°æ®
     init_data();
-    //Èç¹û±³¾°ÒôÀÖ¿ª£¬Ôò²¥·Å±³¾°ÒôÀÖ
-    if (UserDefault::getInstance()->getIntegerForKey("bg_music") == 1) {
+    SaveManager::getInstance()->flush();
+    //å¦‚æžœèƒŒæ™¯éŸ³ä¹å¼€ï¼Œåˆ™æ’­æ”¾èƒŒæ™¯éŸ³ä¹
+    if (SaveManager::getInstance()->getMusicEnabled()) {
         AudioEngine::play2d("/sound/CarrotFantasy.mp3", true, 0.5f);
     }
 
@@ -102,6 +105,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 // This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
 void AppDelegate::applicationDidEnterBackground() {
+    SaveManager::getInstance()->flush();
     Director::getInstance()->stopAnimation();
 
 #if USE_AUDIO_ENGINE

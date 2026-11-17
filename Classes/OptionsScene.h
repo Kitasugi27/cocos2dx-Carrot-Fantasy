@@ -1,56 +1,58 @@
-#ifndef __Options_SCENE_H__
+ï»¿#ifndef __Options_SCENE_H__
 #define __Options_SCENE_H__
 
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 using namespace cocos2d::ui;
-//ÉèÖÃ½çÃæ
+//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½
 class OptionsScene : public cocos2d::Scene
 {
 public:
-    //¹¹Ôìº¯Êý
-    static cocos2d::Scene* createScene();//¼Ì³Ð´´½¨³¡¾°
+    //ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
+    static cocos2d::Scene* createScene();//ï¿½Ì³Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     virtual bool init();
     CREATE_FUNC(OptionsScene);
-    //È¥Ö÷²Ëµ¥
+    //È¥ï¿½ï¿½ï¿½Ëµï¿½
     void goto_menu(Ref* psender);
-    //È¥ÉèÖÃÑ¡ÏîÒ³
+    //È¥ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ò³
     void goto_set(Ref* psender, Widget::TouchEventType type);
-    //È¥Í³¼ÆÑ¡ÏîÒ³
+    //È¥Í³ï¿½ï¿½Ñ¡ï¿½ï¿½Ò³
     void goto_statistics(Ref* psender, Widget::TouchEventType type);
-    //È¥ÈËÔ±Ñ¡ÏîÒ³
+    //È¥ï¿½ï¿½Ô±Ñ¡ï¿½ï¿½Ò³
     void goto_person(Ref* psender, Widget::TouchEventType type);
 };
-//ÉèÖÃ½çÃæµÄÉèÖÃÑ¡ÏîÒ³
+//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ò³
 class SetLayer :public cocos2d::Layer
 {
 public:
-    //¹¹Ôìº¯Êý
-    static cocos2d::Layer* createLayer();//¼Ì³Ð´´½¨³¡¾°
+    //ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
+    static cocos2d::Layer* createLayer();//ï¿½Ì³Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     virtual bool init();
     CREATE_FUNC(SetLayer);
-    //¹Ø±ÕÒôÐ§
+    //ï¿½Ø±ï¿½ï¿½ï¿½Ð§
     virtual void close_sound(Ref* psender);
-    //¹Ø±Õbgm
+    //ï¿½Ø±ï¿½bgm
     virtual void close_bgmusic(Ref* psender);
-    //ÖØÖÃÓÎÏ·´æµµÊý¾Ý
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½æµµï¿½ï¿½ï¿½ï¿½
     virtual void reset_game(Ref* psender);
+    // Refresh sound/music toggles from current save values
+    void refresh_toggles();
 };
-//ÉèÖÃ½çÃæµÄÍ³¼ÆÑ¡ÏîÒ³
+//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½Í³ï¿½ï¿½Ñ¡ï¿½ï¿½Ò³
 class StatisticsLayer :public cocos2d::Layer
 {
 public:
-    //¹¹Ôìº¯Êý
-    static cocos2d::Layer* createLayer();//¼Ì³Ð´´½¨³¡¾°
+    //ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
+    static cocos2d::Layer* createLayer();//ï¿½Ì³Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     virtual bool init();
     CREATE_FUNC(StatisticsLayer);
 };
-//ÉèÖÃ½çÃæµÄÈËÔ±Ñ¡ÏîÒ³
+//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±Ñ¡ï¿½ï¿½Ò³
 class PersonLayer :public cocos2d::Layer
 {
 public:
-    //¹¹Ôìº¯Êý
-    static cocos2d::Layer* createLayer();//¼Ì³Ð´´½¨³¡¾°
+    //ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
+    static cocos2d::Layer* createLayer();//ï¿½Ì³Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     virtual bool init();
     CREATE_FUNC(PersonLayer);
 };

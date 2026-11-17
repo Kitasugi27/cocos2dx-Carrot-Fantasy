@@ -1,4 +1,4 @@
-#include "cocos2d.h"
+ï»¿#include "cocos2d.h"
 #include"GameScene.h"
 #include"enemy.h"
 #include"EnemyCreate.h"
@@ -12,7 +12,12 @@ extern int if_speed_up;
 extern int if_pause;
 extern vector<Enemy*> monster;
 extern vector<Enemy*> barrier;
-/************************************  ³õÊ¼»¯  ********************************/
+
+static float enemy_spawn_time = 1;
+static float enemy_clear_time = 0;
+static int enemy_spawn_n = 0;
+static int enemy_spawn_flag = 0;
+/************************************  ï¿½ï¿½Ê¼ï¿½ï¿½  ********************************/
 cocos2d::Layer* EnemyCreate::createLayer() {
 	return EnemyCreate::create();
 }
@@ -22,20 +27,28 @@ bool EnemyCreate::init() {
 	}
 	return true;
 }
-/**********************************  ³ÉÔ±º¯ÊýÊµÏÖ  ****************************/
-/*ÉèÖÃ¹Ø¿¨*/
+/**********************************  ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½  ****************************/
+/*ï¿½ï¿½ï¿½Ã¹Ø¿ï¿½*/
+void EnemyCreate::reset_static_state()
+{
+	enemy_spawn_time = 1;
+	enemy_clear_time = 0;
+	enemy_spawn_n = 0;
+	enemy_spawn_flag = 0;
+}
 void EnemyCreate::SetLevel(int level_selection) {
+	reset_static_state();
 	monster.clear();
 	barrier.clear();
 	level = level_selection;
 	vector<int>waves;
 	if (level == 1) {
-		//µÚÒ»¹Ø
+		//ï¿½ï¿½Ò»ï¿½ï¿½
 		start_position = { 1,1 };
 		current_waves = 1;
 		max_waves = 15;
-		//Ã¿Ò»²¨¹ÖÎï´æ´¢
-		//Ç°Èý²¨È«ÊÇÆÕÍ¨¹Ö
+		//Ã¿Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢
+		//Ç°ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
 		waves.clear();
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -44,7 +57,7 @@ void EnemyCreate::SetLevel(int level_selection) {
 			monster_data.push_back(waves);
 			waves.clear();
 		}
-		//ºó12²¨ÆÕÍ¨¹Ö5¸ö£¬·ÉÐÐ¹Ö5¸ö
+		//ï¿½ï¿½12ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½5ï¿½ï¿½
 		for (int i = 3; i < 15; i++) {
 			for (int j = 0; j < 5; j++) {
 				waves.push_back(NORMAL);
@@ -55,7 +68,7 @@ void EnemyCreate::SetLevel(int level_selection) {
 			monster_data.push_back(waves);
 			waves.clear();
 		}
-		//ÕÏ°­Îï
+		//ï¿½Ï°ï¿½ï¿½ï¿½
 		barrier_appear(BARRIER_6, { 1,3 }, { 1,4 }, { 0,3 });
 		barrier_appear(BARRIER_6, { 1,7 }, { 1,8 }, { 0,7 });
 		barrier_appear(BARRIER_5, { 1,5 }, { 1,6 }, { 0,5 });
@@ -67,12 +80,12 @@ void EnemyCreate::SetLevel(int level_selection) {
 
 	}
 	else if (level == 2) {
-		//µÚ¶þ¹Ø
+		//ï¿½Ú¶ï¿½ï¿½ï¿½
 		start_position = { 1,4 };
 		current_waves = 1;
 		max_waves = 15;
-		//Ã¿Ò»²¨¹ÖÎï´æ´¢
-		//Ç°Á½²¨È«ÊÇÆÕÍ¨¹Ö
+		//Ã¿Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ´¢
+		//Ç°ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
 		waves.clear();
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -84,8 +97,8 @@ void EnemyCreate::SetLevel(int level_selection) {
 			monster_data.push_back(waves);
 			waves.clear();
 		}
-		//ºó13²¨ÆÕÍ¨¹Ö5¸ö£¬·ÉÐÐ¹Ö5¸ö
-		//×îºóÒ»²¨¼ÓÒ»¸öboss
+		//ï¿½ï¿½13ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½5ï¿½ï¿½
+		//ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½boss
 		for (int i = 2; i < 15; i++) {
 			for (int j = 0; j < 5; j++) {
 				waves.push_back(NORMAL);
@@ -97,7 +110,7 @@ void EnemyCreate::SetLevel(int level_selection) {
 			waves.clear();
 		}
 
-		//ÕÏ°­Îï
+		//ï¿½Ï°ï¿½ï¿½ï¿½
 		barrier_appear(BARRIER_2, { 4,5 });
 		barrier_appear(BARRIER_1, { 2,4 });
 		barrier_appear(BARRIER_1, { 2,8 });
@@ -109,16 +122,16 @@ void EnemyCreate::SetLevel(int level_selection) {
 		barrier_appear(BARRIER_5, { 3,10 }, { 3,11 }, { 2,10 });
 	}
 }
-/*³ö¹Ö*/
+/*ï¿½ï¿½ï¿½ï¿½*/
 void EnemyCreate::monster_appear(int Type) {
-	//´´½¨ÀàÐÍÎªTypeµÄ¹ÖÎï
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªTypeï¿½Ä¹ï¿½ï¿½ï¿½
 	auto enemy = Enemy::createSprite();
 	static_cast<Enemy*>(enemy)->setType(Type);
 	vec2 start = trans_ij_to_xy(start_position);
 	enemy->setPosition(Vec2(start.x, start.y));
 	this->addChild(enemy);
-	monster.push_back(static_cast<Enemy*>(enemy));//¼ÓÈëË÷µÐÊý×é
-	//Èç¹ûÊÇ¹ÖÎï£¬²»ÊÇÕÏ°­£¬³ö¹ÖÌØÐ§ÉèÖÃ
+	monster.push_back(static_cast<Enemy*>(enemy));//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
 	if (Type < 3) {
 		auto effect = Sprite::create("/EnemyCreate/Items02-hd_0.PNG");
 		effect->setPosition(Vec2(start.x, start.y));
@@ -126,8 +139,8 @@ void EnemyCreate::monster_appear(int Type) {
 		effect->runAction(Sequence::create(ScaleTo::create(0.2, 3), CallFunc::create([effect]() {effect->removeFromParent(); }), nullptr));
 	}
 }
-/*ÕÏ°­Îï*/
-//Ò»¸ñÕÏ°­Îï
+/*ï¿½Ï°ï¿½ï¿½ï¿½*/
+//Ò»ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 void EnemyCreate::barrier_appear(int Type, pos position) {
 	vec2 vec;
 	auto barrier_1 = Enemy::createSprite();
@@ -138,7 +151,7 @@ void EnemyCreate::barrier_appear(int Type, pos position) {
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
 }
-//Á½¸ñÕÏ°­Îï
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	vec2 vec_l, vec_r, vec;
 	auto barrier_1 = Enemy::createSprite();
@@ -151,7 +164,7 @@ void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
 }
-//Èý¸ñÕÏ°­Îï
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos position_u) {
 	vec2 vec_l, vec_r,vec_u, vec;
 	auto barrier_1 = Enemy::createSprite();
@@ -165,19 +178,19 @@ void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos po
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
 }
-/*¿ªÊ¼ÓÎÏ·*/
+/*ï¿½ï¿½Ê¼ï¿½ï¿½Ï·*/
 void EnemyCreate::start() {
-	//¿ªÊ¼ÓÎÏ·,´ò¿ªµ÷¶ÈÆ÷
+	//ï¿½ï¿½Ê¼ï¿½ï¿½Ï·,ï¿½ò¿ªµï¿½ï¿½ï¿½ï¿½ï¿½
 	auto create_monster = CallFunc::create([=]() {this->scheduleUpdate(); });
-	//ÈýÃëµ¹¼ÆÊ±ºó¿ªÊ¼³ö¹Ö
+	//ï¿½ï¿½ï¿½ëµ¹ï¿½ï¿½Ê±ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	this->runAction(Sequence::create(DelayTime::create(3), create_monster, nullptr));
 }
-/*updateº¯Êý*/
+/*updateï¿½ï¿½ï¿½ï¿½*/
 void EnemyCreate::update(float dt) {
-	static float time = 1;
-	static float clear_time = 0;
-	static int n = 0;
-	static int flag = 0;
+	float& time = enemy_spawn_time;
+	float& clear_time = enemy_clear_time;
+	int& n = enemy_spawn_n;
+	int& flag = enemy_spawn_flag;
 	if (if_pause == 0) {
 		if (flag == 0) {
 			if (monster.size() == 0 && clear_time >= 2) {
@@ -186,7 +199,7 @@ void EnemyCreate::update(float dt) {
 				game_waves += 1;
 			}
 		}
-		//Èç¹ûµ±Ç°¹ÖÎïÈ«Çå£¬ÇÒ»¹ÓÐ¹ÖÎïÃ»³ö
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½È«ï¿½å£¬ï¿½Ò»ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½Ã»ï¿½ï¿½
 		if (flag == 1 && current_waves <= max_waves) {
 			if (n == 0) {
 				monster_appear(monster_data[current_waves - 1][n]);

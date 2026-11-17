@@ -1,32 +1,21 @@
-#pragma once
+ï»¿#pragma once
 #include<string>
 #include "cocos2d.h"
+#include "SaveManager.h"
 #include "sound&music.h"
 using namespace std;
 USING_NS_CC;
-/*±¾ÓÎÏ·Êý¾Ý´æ´¢²ÉÓÃcocos×Ô´øµÄUserDefault½øÐÐ´æ´¢£¬½«»áÔÚ±£´æµØÖ·Éú³É¶ÔÓ¦µÄ.xmlÎÄ¼þ£¬¿ÉÒÔ¶ÔÊý¾Ý½øÐÐ»ñÈ¡ºÍÐ´Èë*/
-//ÖØÖÃËùÓÐÊý¾Ý
+/* Save data is accessed only through SaveManager. */
+// Reset all data
 static void reset_data() {
-	UserDefault::getInstance()->setBoolForKey("have_init", true);
-	UserDefault::getInstance()->setIntegerForKey("adventure_statistics", 1);
-	UserDefault::getInstance()->setIntegerForKey("hide_statistics", 0);
-	UserDefault::getInstance()->setIntegerForKey("bosspattern_statistics", 0);
-	UserDefault::getInstance()->setIntegerForKey("money_statistics", 0);
-	UserDefault::getInstance()->setIntegerForKey("monster_statistics", 0);
-	UserDefault::getInstance()->setIntegerForKey("boss_statistics", 0);
-	UserDefault::getInstance()->setIntegerForKey("damage_statistics", 0);
-	UserDefault::getInstance()->setIntegerForKey("level_1", 1);
-	UserDefault::getInstance()->setIntegerForKey("level_2", 0);
-	UserDefault::getInstance()->setIntegerForKey("level_3", 0);
-	UserDefault::getInstance()->setIntegerForKey("if_boss_lock", 1);
-	UserDefault::getInstance()->setIntegerForKey("if_nest_lock", 1);
+	SaveManager::getInstance()->resetAllData();
 }
-//³õÊ¼»¯´æµµÊý¾Ý
-//³õÊ¼»¯´æµµÊý¾Ý
+// Initialize save data
 static void init_data() {
-	if (!UserDefault::getInstance()->getBoolForKey("have_init", false)) {
-		//Èç¹ûÎÞ´æµµ£¬ÔòÖØÖÃ´æµµÊý¾Ý£¬³õÊ¼»¯ÉùÒôÊý¾Ý£»ÈôÓÐ´æµµÔò²»½øÐÐ²Ù×÷
-		reset_data();
+	const bool shouldInitSound = !SaveManager::getInstance()->hasInit();
+	SaveManager::getInstance()->initDefaultData();
+	if (shouldInitSound) {
+		// First run: reset data and initialize sound; do nothing if a save exists
 		init_sound();
 	}
 }

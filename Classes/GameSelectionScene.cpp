@@ -1,21 +1,22 @@
-#include"GameScene.h"
+ï»¿#include"GameScene.h"
 #include "GameSelectionScene.h"
 #include "MenuScene.h"
 #include "OptionsScene.h"
 #include "HelperScene.h"
 #include "sound&music.h"
 #include "GameData.h"
+#include "SaveManager.h"
 #include"ui/CocosGUI.h"
 USING_NS_CC;
 using namespace cocos2d::ui;
 extern int level_selection;
-/*******************************  ´íÎó´¦Àí  ************************************/
+/*******************************  é”™è¯¯å¤„ç†  ************************************/
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
 }
-/*******************************  ¹¤¾ßº¯Êı  **************************************/
-//Í¬HelperScene.cppÖĞµÄÓÃ·¨
+/*******************************  å·¥å…·å‡½æ•°  **************************************/
+//åŒHelperScene.cppä¸­çš„ç”¨æ³•
 int find(float page[], int N, float x) {
     for (int i = 0; i < N; i++) {
         if (x >= page[i]) {
@@ -29,31 +30,31 @@ Scene*  GameSelectionScene::createScene()
 {
     return GameSelectionScene::create();
 }
-/*³õÊ¼»¯*/
+/*åˆå§‹åŒ–*/
 bool GameSelectionScene::init()
 {
-    /*³õÊ¼»¯³¡¾°*/
+    /*åˆå§‹åŒ–åœºæ™¯*/
     if (!Scene::init())
     {
         return false;
     }
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /**************************  ±³¾°  *******************************/
+    /**************************  èƒŒæ™¯  *******************************/
     auto background_image = Sprite::create("/GameSelectionScene/stages_bg-hd_0.PNG");
     background_image->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 2));
     this->addChild(background_image);
-    /**************************  °ïÖú  ******************************/
+    /**************************  å¸®åŠ©  ******************************/
     auto menu = Menu::create();
     menu->setPosition(Vec2::ZERO);
-    //È¥°ïÖú½çÃæ
+    //å»å¸®åŠ©ç•Œé¢
     auto help_btn = MenuItemImage::create("/GameSelectionScene/stages_bg-hd_42.PNG", "/GameSelectionScene/stages_bg-hd_33.PNG");
-    help_btn->setCallback([](Ref* psender) {//°´Å¥»Øµ÷º¯Êı
-        button_sound_effect();//²¥·ÅÒôĞ§
-        auto helper_scene = HelperScene::createScene();//´´½¨°ïÖú³¡¾°
-        Director::getInstance()->replaceScene(TransitionCrossFade::create(0.2, helper_scene));//ÒÔÏûÊ§ĞÎÊ½ÇĞ»»
+    help_btn->setCallback([](Ref* psender) {//æŒ‰é’®å›è°ƒå‡½æ•°
+        button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+        auto helper_scene = HelperScene::createScene();//åˆ›å»ºå¸®åŠ©åœºæ™¯
+        Director::getInstance()->replaceScene(TransitionCrossFade::create(0.2, helper_scene));//ä»¥æ¶ˆå¤±å½¢å¼åˆ‡æ¢
         });
     help_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.8,
         origin.y + visibleSize.height * 0.95));
@@ -61,8 +62,8 @@ bool GameSelectionScene::init()
 
     this->addChild(menu);
     /*************************  biglevel  ****************************/
-    auto biglevel = BigLevelLayer::createLayer();//´´½¨Ñ¡´ó¹ØµÄLayer
-    this->addChild(biglevel);//Ìí¼ÓäÖÈ¾
+    auto biglevel = BigLevelLayer::createLayer();//åˆ›å»ºé€‰å¤§å…³çš„Layer
+    this->addChild(biglevel);//æ·»åŠ æ¸²æŸ“
 
 
     return true;
@@ -72,16 +73,16 @@ cocos2d::Layer* BigLevelLayer::createLayer()
 {
 	return BigLevelLayer::create();
 }
-//³õÊ¼»¯
+//åˆå§‹åŒ–
 bool BigLevelLayer::init()
 {
 	if (!Layer::init()) {
 		return false;
 	}
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /*****************************************  Ò³Âë  ***********************************/
+    /*****************************************  é¡µç   ***********************************/
     auto page_0 = Sprite::create("/GameSelectionScene/page_yes.png");
     page_0->setTag(0);
     page_0->setScale(1.4);
@@ -102,29 +103,29 @@ bool BigLevelLayer::init()
     page_2->setPosition(Vec2(origin.x + visibleSize.width * 0.53,
         origin.y + visibleSize.height * 0.05));
     this->addChild(page_2);
-    /***************************  »¬¶¯²ã  *********************************/
-    create_slide_layer();//´´½¨»¬¶¯²ã
-    /***************************  ²Ëµ¥²ã  *********************************/
+    /***************************  æ»‘åŠ¨å±‚  *********************************/
+    create_slide_layer();//åˆ›å»ºæ»‘åŠ¨å±‚
+    /***************************  èœå•å±‚  *********************************/
     auto menu = Menu::create();
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 0);
-    //·µ»ØÖ÷²Ëµ¥
+    //è¿”å›ä¸»èœå•
     auto home_btn = MenuItemImage::create("/GameSelectionScene/themescene1-hd_8.PNG", "/GameSelectionScene/themescene1-hd_17.PNG");
-    home_btn->setCallback([this](Ref* psender) {//»Øµ÷º¯Êı
-        button_sound_effect();//²¥·ÅÒôĞ§
-        auto menu_scene = MenuScene::createScene();//´´½¨Ö÷²Ëµ¥¶ÔÓ¦Scene
-        Director::getInstance()->replaceScene(TransitionFlipAngular::create(0.2, menu_scene));//ÒÔ¶Ô½Ç·´×ªĞÎÊ½ÇĞ»»
+    home_btn->setCallback([this](Ref* psender) {//å›è°ƒå‡½æ•°
+        button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+        auto menu_scene = MenuScene::createScene();//åˆ›å»ºä¸»èœå•å¯¹åº”Scene
+        Director::getInstance()->replaceScene(TransitionFlipAngular::create(0.2, menu_scene));//ä»¥å¯¹è§’åè½¬å½¢å¼åˆ‡æ¢
         });
     home_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.2,
         origin.y + visibleSize.height * 0.95));
     menu->addChild(home_btn);
-    //Ïò×ó·­Ò³°´Å¥
+    //å‘å·¦ç¿»é¡µæŒ‰é’®
     auto left_btn = MenuItemImage::create("/GameSelectionScene/themescene1-hd_32.PNG", "/GameSelectionScene/themescene1-hd_31.PNG",
         CC_CALLBACK_1(BigLevelLayer::page_left, this));
     left_btn->setPosition(Vec2(origin.x + visibleSize.width *0.1,
         origin.y + visibleSize.height / 2));
     menu->addChild(left_btn);
-    //ÏòÓÒ·­Ò³°´Å¥
+    //å‘å³ç¿»é¡µæŒ‰é’®
     auto right_btn = MenuItemImage::create("/GameSelectionScene/themescene1-hd_26.PNG", "/GameSelectionScene/themescene1-hd_25.PNG",
         CC_CALLBACK_1(BigLevelLayer::page_right, this));
     right_btn->setPosition(Vec2(origin.x + visibleSize.width *0.9,
@@ -133,72 +134,68 @@ bool BigLevelLayer::init()
 
     return true;
 }
-//´´½¨»¬¶¯²ã
+//åˆ›å»ºæ»‘åŠ¨å±‚
 void BigLevelLayer::create_slide_layer()
 {
     auto slide_layer = Layer::create();
     slide_layer->setName("SlideLayer");
     this->addChild(slide_layer,1);
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /*******************************  »¬¶¯²ã  ************************************/
-    //Ìì¼Ê
+    /*******************************  æ»‘åŠ¨å±‚  ************************************/
+    //å¤©é™…
     auto skyline = Sprite::create("/GameSelectionScene/themescene2-hd.pvr_2.PNG");
     skyline->setName("Skyline");
     skyline->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height * 0.45));
     slide_layer->addChild(skyline);
-    //Ìì¼Ê¹Ø¿¨Í³¼Æ
+    //å¤©é™…å…³å¡ç»Ÿè®¡
     auto level_1_statistics_image = Sprite::create("/GameSelectionScene/Items03-hd.pvr_0.PNG");
     level_1_statistics_image->setPosition(Vec2(origin.x + visibleSize.width * 0.66,
         origin.y + visibleSize.height * 0.11));
     slide_layer->addChild(level_1_statistics_image);
 
-    auto level_1_statistics_txt = Label::createWithTTF(to_string(UserDefault::getInstance()->getIntegerForKey("level_1")) + "/9",
+    auto level_1_statistics_txt = Label::createWithTTF(to_string(SaveManager::getInstance()->getUnlockedLevel()) + "/9",
         "/fonts/Marker Felt.ttf", 20);
     level_1_statistics_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.66,
         origin.y + visibleSize.height * 0.12));
     slide_layer->addChild(level_1_statistics_txt);
-    //´ÔÁÖ
+    //ä¸›æ—
     auto jungle = Sprite::create("/GameSelectionScene/themescene2-hd.pvr_0.PNG");
     jungle->setName("Jungle");
     jungle->setPosition(Vec2(origin.x + visibleSize.width *1.5,
         origin.y + visibleSize.height * 0.45));
     slide_layer->addChild(jungle);
-    //´ÔÁÖ¹Ø¿¨Í³¼Æ
-    if (UserDefault::getInstance()->getIntegerForKey("level_2") == 0) {
+    //ä¸›æ—å…³å¡ç»Ÿè®¡
+    if (!SaveManager::getInstance()->getThemeUnlocked(2)) {
         auto level_2_lock = Sprite::create("/GameSelectionScene/themescene1-hd_10.PNG");
         level_2_lock->setPosition(Vec2(origin.x + visibleSize.width * 1.78,
             origin.y + visibleSize.height * 0.2));
         slide_layer->addChild(level_2_lock);
     }
-    else {
-        //´ı¿ª·¢
-    }
-    //É³Ä®
+    //ä¸›æ—å…³å¡å¾…å¼€å‘
+    //æ²™æ¼ 
     auto desert = Sprite::create("/GameSelectionScene/themescene2-hd.pvr_1.PNG");
     desert->setName("Desert");
     desert->setPosition(Vec2(origin.x + visibleSize.width * 2.5,
         origin.y + visibleSize.height * 0.45));
     slide_layer->addChild(desert);
-    //É³Ä®¹Ø¿¨Í³¼Æ
-    if (UserDefault::getInstance()->getIntegerForKey("level_3") == 0) {
+    //æ²™æ¼ å…³å¡ç»Ÿè®¡
+    if (!SaveManager::getInstance()->getThemeUnlocked(3)) {
         auto level_3_lock = Sprite::create("/GameSelectionScene/themescene1-hd_10.PNG");
         level_3_lock->setPosition(Vec2(origin.x + visibleSize.width * 2.78,
             origin.y + visibleSize.height * 0.2));
         slide_layer->addChild(level_3_lock);
     }
-    else {
-        //´ı¿ª·¢
-    }
+    //æ²™æ¼ å…³å¡å¾…å¼€å‘
 
-    /***********************************  »¬¶¯ÊµÏÖ  ***********************************************/
+    /***********************************  æ»‘åŠ¨å®ç°  ***********************************************/
     auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);//ÉèÖÃÊÂ¼şÍÌÃ»
+    listener->setSwallowTouches(true);//è®¾ç½®äº‹ä»¶åæ²¡
     listener->onTouchBegan = [slide_layer, skyline, jungle, desert](Touch* touch, Event* event) {
         Vec2 pos = slide_layer->convertTouchToNodeSpace(touch);
-        //Èô´¥ÃşÆğÊ¼µãÔÚÃ¿Ò»¸öÍ¼ĞÎµÄÑ¡Ôñ·¶Î§ÄÚÔòÊÂ¼şÍÌÃ»
+        //è‹¥è§¦æ‘¸èµ·å§‹ç‚¹åœ¨æ¯ä¸€ä¸ªå›¾å½¢çš„é€‰æ‹©èŒƒå›´å†…åˆ™äº‹ä»¶åæ²¡
         if ((pos.x > skyline->getPositionX() - skyline->getContentSize().width / 2 &&
                 pos.x< skyline->getPositionX() + skyline->getContentSize().width / 2 &&
                 pos.y>skyline->getPositionY() - skyline->getContentSize().height / 2 &&
@@ -219,7 +216,7 @@ void BigLevelLayer::create_slide_layer()
             return false;
         }
     };
-    listener->onTouchMoved = [slide_layer](Touch* touch, Event* event) {//ÊµÏÖÆÁÄ»Ëæ´¥ÃşÒÆ¶¯
+    listener->onTouchMoved = [slide_layer](Touch* touch, Event* event) {//å®ç°å±å¹•éšè§¦æ‘¸ç§»åŠ¨
         float distance = touch->getLocation().x - touch->getPreviousLocation().x;
         slide_layer->setPositionX(slide_layer->getPositionX() + distance);
     };
@@ -258,7 +255,7 @@ void BigLevelLayer::create_slide_layer()
                     pos.y>skyline->getPositionY() - skyline->getContentSize().height / 2 &&
                     pos.y < skyline->getPositionY() + skyline->getContentSize().height / 2) {
                     goto_level_1(slide_layer);
-                    return;//Layer ÒÑÇĞ»»/ÒÆ³ı£¬²»ÄÜÔÙ·ÃÎÊ this£¨·ñÔò use-after-free£©
+                    return;//Layer å·²åˆ‡æ¢/ç§»é™¤ï¼Œä¸èƒ½å†è®¿é—® thisï¼ˆå¦åˆ™ use-after-freeï¼‰
                 }
                 else if
                     (pos.x > jungle->getPositionX() - jungle->getContentSize().width / 2 &&
@@ -266,7 +263,7 @@ void BigLevelLayer::create_slide_layer()
                         pos.y>jungle->getPositionY() - jungle->getContentSize().height / 2 &&
                         pos.y < jungle->getPositionY() + jungle->getContentSize().height / 2) {
                     goto_level_2(slide_layer);
-                    return;//Layer ÒÑÇĞ»»/ÒÆ³ı£¬²»ÄÜÔÙ·ÃÎÊ this£¨·ñÔò use-after-free£©
+                    return;//Layer å·²åˆ‡æ¢/ç§»é™¤ï¼Œä¸èƒ½å†è®¿é—® thisï¼ˆå¦åˆ™ use-after-freeï¼‰
                 }
                 else if
                     (pos.x > desert->getPositionX() - desert->getContentSize().width / 2 &&
@@ -275,11 +272,11 @@ void BigLevelLayer::create_slide_layer()
                         pos.y < desert->getPositionY() + desert->getContentSize().height / 2)
                 {
                     goto_level_3(slide_layer);
-                    return;//Layer ÒÑÇĞ»»/ÒÆ³ı£¬²»ÄÜÔÙ·ÃÎÊ this£¨·ñÔò use-after-free£©
+                    return;//Layer å·²åˆ‡æ¢/ç§»é™¤ï¼Œä¸èƒ½å†è®¿é—® thisï¼ˆå¦åˆ™ use-after-freeï¼‰
                 }
             }
         }
-        if (this->getParent() == nullptr) return;//Layer ÒÑ´Ó³¡¾°ÒÆ³ı£¬½ûÖ¹ÔÙ·ÃÎÊ×ÔÉí
+        if (this->getParent() == nullptr) return;//Layer å·²ä»åœºæ™¯ç§»é™¤ï¼Œç¦æ­¢å†è®¿é—®è‡ªèº«
         for (int i = 0; i < 3; i++) {
             Node* dot = this->getChildByTag(i);
             if (dot) {
@@ -290,17 +287,17 @@ void BigLevelLayer::create_slide_layer()
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, slide_layer);
 
 }
-//Ïò×óÒ»Ò³
+//å‘å·¦ä¸€é¡µ
 void BigLevelLayer::page_left(Ref* psender)
 {
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    //¼ÇÂ¼Ã¿Ò»Ò³¶ÔÓ¦×ø±ê
+    //è®°å½•æ¯ä¸€é¡µå¯¹åº”åæ ‡
     float page[3] = { 0,-visibleSize.width,-2 * visibleSize.width };
     Node* slide_layer = this->getChildByName("SlideLayer");
     int n = find(page, 3, slide_layer->getPositionX());
-    //Ïò×óÒÆ¶¯Ò»Ò³
+    //å‘å·¦ç§»åŠ¨ä¸€é¡µ
     if (slide_layer->getPosition().x < page[0]) {
         slide_layer->runAction(MoveBy::create(0.1, Vec2(visibleSize.width, 0)));
         page_sound_effect();
@@ -311,17 +308,17 @@ void BigLevelLayer::page_left(Ref* psender)
     }
 
 }
-//ÏòÓÒÒ»Ò³
+//å‘å³ä¸€é¡µ
 void BigLevelLayer::page_right(Ref* psender)
 {
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    //¼ÇÂ¼Ã¿Ò»Ò³×ø±ê
+    //è®°å½•æ¯ä¸€é¡µåæ ‡
     float page[3] = { 0,-visibleSize.width,-2 * visibleSize.width };
     Node* slide_layer = this->getChildByName("SlideLayer");
     int n = find(page, 3, slide_layer->getPositionX());
-    //ÏòÓÒÒÆ¶¯Ò»Ò³
+    //å‘å³ç§»åŠ¨ä¸€é¡µ
     if (slide_layer->getPosition().x > page[2]) {
         slide_layer->runAction(MoveBy::create(0.1, Vec2(-visibleSize.width, 0)));
             page_sound_effect();
@@ -332,24 +329,24 @@ void BigLevelLayer::page_right(Ref* psender)
     }
 
 }
-//È¥Ìì¼Ê
+//å»å¤©é™…
 void BigLevelLayer::goto_level_1(Ref* psender)
 {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    auto level_1_layer = Level_1_Layer::createLayer();//´´½¨²ã£¬²¢¼ÓÈë
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    auto level_1_layer = Level_1_Layer::createLayer();//åˆ›å»ºå±‚ï¼Œå¹¶åŠ å…¥
     this->getParent()->addChild(level_1_layer, 1);
     this->removeFromParent();
 }
-//È¥´ÔÁÖ
+//å»ä¸›æ—
 void BigLevelLayer::goto_level_2(Ref* psender)
 {
-    button_sound_effect();//²¥·ÅÒôĞ§
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
 
-    if (UserDefault::getInstance()->getIntegerForKey("level_2") == 0) {//Èôµ±Ç°´ÔÁÖÎ´½âËø£¬ÔòÉÏËøÌáÊ¾
+    if (!SaveManager::getInstance()->getThemeUnlocked(2)) {//è‹¥å½“å‰ä¸›æ—æœªè§£é”ï¼Œåˆ™ä¸Šé”æç¤º
 
         auto visibleSize = Director::getInstance()->getVisibleSize();
         Vec2 origin = Director::getInstance()->getVisibleOrigin();
-        /*****************************  ´¿É«²ã  ******************************************/
+        /*****************************  çº¯è‰²å±‚  ******************************************/
         auto black_layer = LayerColor::create(Color4B::BLACK);
         black_layer->setOpacity(85);
 
@@ -359,13 +356,13 @@ void BigLevelLayer::goto_level_2(Ref* psender)
         };
         listener->setSwallowTouches(true);
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-        /********************************  ±³¾°  *****************************************/
+        /********************************  èƒŒæ™¯  *****************************************/
         auto level_2_lock = Sprite::create("/GameSelectionScene/level_2_lock.png");
         level_2_lock->setPosition(Vec2(origin.x + visibleSize.width / 2,
             origin.y + visibleSize.height / 2));
         level_2_lock->setScale(1.4);
         black_layer->addChild(level_2_lock);
-        /********************************  °´Å¥  ****************************************/
+        /********************************  æŒ‰é’®  ****************************************/
         auto menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
 
@@ -382,20 +379,18 @@ void BigLevelLayer::goto_level_2(Ref* psender)
 
         this->addChild(black_layer, 2);
     }
-    else {
-        ;//boss_pattern´ı¿ª·¢
-    }
+    //ä¸›æ—å…³å¡å¾…å¼€å‘
 }
-//È¥É³Ä®
+//å»æ²™æ¼ 
 void BigLevelLayer::goto_level_3(Ref* psender)
 {
-    button_sound_effect();//²¥·ÅÒôĞ§
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
 
-    if (UserDefault::getInstance()->getIntegerForKey("level_2") == 0) {//Èôµ±Ç°É³Ä®Î´½âËø£¬ÔòÉÏËøÌáÊ¾
+    if (!SaveManager::getInstance()->getThemeUnlocked(3)) {//è‹¥å½“å‰æ²™æ¼ æœªè§£é”ï¼Œåˆ™ä¸Šé”æç¤º
 
         auto visibleSize = Director::getInstance()->getVisibleSize();
         Vec2 origin = Director::getInstance()->getVisibleOrigin();
-        /*****************************  ´¿É«²ã  ******************************************/
+        /*****************************  çº¯è‰²å±‚  ******************************************/
         auto black_layer = LayerColor::create(Color4B::BLACK);
         black_layer->setOpacity(85);
 
@@ -405,13 +400,13 @@ void BigLevelLayer::goto_level_3(Ref* psender)
         };
         listener->setSwallowTouches(true);
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-        /********************************  ±³¾°  *****************************************/
+        /********************************  èƒŒæ™¯  *****************************************/
         auto level_3_lock = Sprite::create("/GameSelectionScene/level_3_lock.png");
         level_3_lock->setPosition(Vec2(origin.x + visibleSize.width / 2,
             origin.y + visibleSize.height / 2));
         level_3_lock->setScale(1.4);
         black_layer->addChild(level_3_lock);
-        /********************************  °´Å¥  ****************************************/
+        /********************************  æŒ‰é’®  ****************************************/
         auto menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
 
@@ -428,35 +423,33 @@ void BigLevelLayer::goto_level_3(Ref* psender)
 
         this->addChild(black_layer, 2);
     }
-    else {
-        ;//boss_pattern´ı¿ª·¢
-    }
+    //æ²™æ¼ å…³å¡å¾…å¼€å‘
 }
 /********************************  Level_1_Layer  *********************************/
 cocos2d::Layer* Level_1_Layer::createLayer()
 {
     return Level_1_Layer::create();
 }
-//³õÊ¼»¯
+//åˆå§‹åŒ–
 bool Level_1_Layer::init()
 {
     if (!Layer::init()) {
         return false;
     }
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /***********************  ²Ëµ¥  *************************/
+    /***********************  èœå•  *************************/
     auto menu = Menu::create();
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu);
-    //·µ»ØÑ¡´ó¹Ø
+    //è¿”å›é€‰å¤§å…³
     auto return_btn = MenuItemImage::create("/GameSelectionScene/stages_bg-hd_41.PNG", "/GameSelectionScene/stages_bg-hd_40.PNG",
         CC_CALLBACK_1(Level_1_Layer::return_to_biglevel, this));
     return_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.2,
         origin.y + visibleSize.height * 0.95));
     menu->addChild(return_btn);
-    /**********************  ±³¾°  **************************/
+    /**********************  èƒŒæ™¯  **************************/
     auto bg_1 = Sprite::create("/GameSelectionScene/BG_Left.PNG");
     bg_1->setPosition(Vec2(origin.x + bg_1->getContentSize().width / 2,
         origin.y + bg_1->getContentSize().height / 2));
@@ -467,38 +460,38 @@ bool Level_1_Layer::init()
         origin.y + bg_2->getContentSize().height / 2));
     this->addChild(bg_2);
 
-    /***********************  »¬¶¯²ã  ***********************/
+    /***********************  æ»‘åŠ¨å±‚  ***********************/
     create_slide_layer();
 
     return true;
 }
-//´´½¨»¬¶¯²ã
+//åˆ›å»ºæ»‘åŠ¨å±‚
 void Level_1_Layer::create_slide_layer()
 {
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /**********************  »¬¶¯²ãÉè¼Æ  ***********************/
-    //´´½¨Ò»¸ö»¬¶¯²ã
+    /**********************  æ»‘åŠ¨å±‚è®¾è®¡  ***********************/
+    //åˆ›å»ºä¸€ä¸ªæ»‘åŠ¨å±‚
     auto slide_layer = Layer::create();
     slide_layer->setName("SlideLayer");
     this->addChild(slide_layer);
 
-    //¿É¶¯²ã  Ëæ´¥Ãş¶¯»­ÒÆ¶¯
+    //å¯åŠ¨å±‚  éšè§¦æ‘¸åŠ¨ç”»ç§»åŠ¨
     auto move_layer = Layer::create();
     move_layer->setName("MoveLayer");
     slide_layer->addChild(move_layer, 1);
-    //²»¿É¶¯²ã  ÔÚ´¥ÃşÈ·¶¨·­Ò³ºóÖ±½ÓÒÆ¶¯
+    //ä¸å¯åŠ¨å±‚  åœ¨è§¦æ‘¸ç¡®å®šç¿»é¡µåç›´æ¥ç§»åŠ¨
     auto static_layer = Layer::create();
     static_layer->setName("StaticLayer");
     slide_layer->addChild(static_layer, 2);
-    /*************************  ¹Ø¿¨level_1_1  **************************************/
-    //Í¼  ±³¾°Í¼Ğè»¬¶¯£¬¼ÓÈë¿É¶¯²ã
+    /*************************  å…³å¡level_1_1  **************************************/
+    //å›¾  èƒŒæ™¯å›¾éœ€æ»‘åŠ¨ï¼ŒåŠ å…¥å¯åŠ¨å±‚
     auto level_1_1_image = Sprite::create("/GameSelectionScene/Level_1.PNG");
     level_1_1_image->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height *0.54));
     move_layer->addChild(level_1_1_image);
-    //¹²¼¸²¨  ²»Ğè»¬¶¯£¬¼ÓÈë²»¿É¶¯²ã
+    //å…±å‡ æ³¢  ä¸éœ€æ»‘åŠ¨ï¼ŒåŠ å…¥ä¸å¯åŠ¨å±‚
     auto waves_1 = Sprite::create("/GameSelectionScene/total_waves.png");
     waves_1->setPosition(Vec2(origin.x + visibleSize.width * 0.6,
         origin.y + visibleSize.height * 0.83));
@@ -508,18 +501,18 @@ void Level_1_Layer::create_slide_layer()
     waves_1_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.6,
         origin.y + visibleSize.height * 0.83));
     static_layer->addChild(waves_1_txt);
-    //ÅÚÌ¨ÀàĞÍ  ²»Ğè»¬¶¯£¬¼ÓÈë²»¿É¶¯²ã
-    //Æ¿×Ó
+    //ç‚®å°ç±»å‹  ä¸éœ€æ»‘åŠ¨ï¼ŒåŠ å…¥ä¸å¯åŠ¨å±‚
+    //ç“¶å­
     auto tower_1 = Sprite::create("/GameSelectionScene/Tower_1.PNG");
     tower_1->setPosition(Vec2(origin.x + visibleSize.width / 2 - tower_1->getContentSize().width / 2,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_1);
-    //±ã±ã
+    //ä¾¿ä¾¿
     auto tower_2 = Sprite::create("/GameSelectionScene/Tower_2.PNG");
     tower_2->setPosition(Vec2(origin.x + visibleSize.width / 2 + tower_2->getContentSize().width / 2,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_2);
-    //¿ªÊ¼  ²»ĞèÒÆ¶¯£¬¼ÓÈë²»¿É¶¯²ã
+    //å¼€å§‹  ä¸éœ€ç§»åŠ¨ï¼ŒåŠ å…¥ä¸å¯åŠ¨å±‚
     auto level_1_btn = Button::create("/GameSelectionScene/stages_bg-hd_30.PNG", "/GameSelectionScene/stages_bg-hd_28.PNG",
         "/GameSelectionScene/stages_bg-hd_39.PNG");
     level_1_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_1, this));
@@ -527,19 +520,19 @@ void Level_1_Layer::create_slide_layer()
         origin.y + visibleSize.height * 0.1));
     static_layer->addChild(level_1_btn);
 
-    /*************************  ¹Ø¿¨level_1_2  **************************************/
-    //Í¼ ¿É¶¯²ã
+    /*************************  å…³å¡level_1_2  **************************************/
+    //å›¾ å¯åŠ¨å±‚
     auto level_1_2_image = Sprite::create("/GameSelectionScene/Level_2.PNG");
     level_1_2_image->setPosition(Vec2(origin.x + visibleSize.width * 1.5,
         origin.y + visibleSize.height * 0.54));
     move_layer->addChild(level_1_2_image);
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//ÈôÎ´½âËø£¬ÔòäÖÈ¾¡°Ëø¡±ÌáÊ¾
+    if (SaveManager::getInstance()->getUnlockedLevel() < 2) {//è‹¥æœªè§£é”ï¼Œåˆ™æ¸²æŸ“â€œé”â€æç¤º
         auto level_1_2_lock = Sprite::create("/GameSelectionScene/stages_bg-hd_31.PNG");
         level_1_2_lock->setPosition(Vec2(origin.x + visibleSize.width * 1.64,
             origin.y + visibleSize.height * 0.4));
         move_layer->addChild(level_1_2_lock);
     }
-    //¹²¼¸²¨ ²»¿É¶¯²ã
+    //å…±å‡ æ³¢ ä¸å¯åŠ¨å±‚
     auto waves_2 = Sprite::create("/GameSelectionScene/total_waves.png");
     waves_2->setPosition(Vec2(origin.x + visibleSize.width * 1.6,
         origin.y + visibleSize.height * 0.83));
@@ -549,46 +542,46 @@ void Level_1_Layer::create_slide_layer()
     waves_2_txt->setPosition(Vec2(origin.x + visibleSize.width * 1.6,
         origin.y + visibleSize.height * 0.83));
     static_layer->addChild(waves_2_txt);
-    //ÅÚÌ¨ÀàĞÍ ²»¿É¶¯²ã
-    //Æ¿×Ó
+    //ç‚®å°ç±»å‹ ä¸å¯åŠ¨å±‚
+    //ç“¶å­
     auto tower_2_1 = Sprite::create("/GameSelectionScene/Tower_1.PNG");
     tower_2_1->setPosition(Vec2(origin.x + visibleSize.width * 1.5 - tower_2_1->getContentSize().width,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_2_1);
-    //±ã±ã
+    //ä¾¿ä¾¿
     auto tower_2_2 = Sprite::create("/GameSelectionScene/Tower_2.PNG");
     tower_2_2->setPosition(Vec2(origin.x + visibleSize.width *1.5,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_2_2);
-    //ĞÇĞÇ
+    //æ˜Ÿæ˜Ÿ
     auto tower_2_3 = Sprite::create("/GameSelectionScene/Tower_4.PNG");
     tower_2_3->setPosition(Vec2(origin.x + visibleSize.width * 1.5 + tower_2_3->getContentSize().width,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_2_3);
-    //¿ªÊ¼  ²»¿É¶¯²ã
+    //å¼€å§‹  ä¸å¯åŠ¨å±‚
     auto level_2_btn = Button::create("/GameSelectionScene/stages_bg-hd_30.PNG", "/GameSelectionScene/stages_bg-hd_28.PNG",
         "/GameSelectionScene/stages_bg-hd_39.PNG");
     level_2_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_2, this));
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//ÈôÎ´½âËø£¬ÔòÉèÖÃ°´Å¥Îª²»¿ÉÓÃ
+    if (SaveManager::getInstance()->getUnlockedLevel() < 2) {//è‹¥æœªè§£é”ï¼Œåˆ™è®¾ç½®æŒ‰é’®ä¸ºä¸å¯ç”¨
         level_2_btn->setEnabled(false);
     }
     level_2_btn->setPosition(Vec2(origin.x + visibleSize.width * 1.5,
         origin.y + visibleSize.height * 0.1));
     static_layer->addChild(level_2_btn);
 
-    /*************************  ¹Ø¿¨level_1_3  **************************************/
-     //Í¼ ¿É¶¯²ã
+    /*************************  å…³å¡level_1_3  **************************************/
+     //å›¾ å¯åŠ¨å±‚
     auto level_1_3_image = Sprite::create("/GameSelectionScene/Level_3.PNG");
     level_1_3_image->setPosition(Vec2(origin.x + visibleSize.width * 2.5,
         origin.y + visibleSize.height * 0.54));
     move_layer->addChild(level_1_3_image);
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//ÈôÎ´½âËø£¬ÔòäÖÈ¾¡°Ëø¡±ÌáÊ¾
+    if (SaveManager::getInstance()->getUnlockedLevel() < 3) {//è‹¥æœªè§£é”ï¼Œåˆ™æ¸²æŸ“â€œé”â€æç¤º
         auto level_1_3_lock = Sprite::create("/GameSelectionScene/stages_bg-hd_31.PNG");
         level_1_3_lock->setPosition(Vec2(origin.x + visibleSize.width * 2.64,
             origin.y + visibleSize.height * 0.4));
         move_layer->addChild(level_1_3_lock);
     }
-    //¹²¼¸²¨  ²»¿É¶¯²ã
+    //å…±å‡ æ³¢  ä¸å¯åŠ¨å±‚
     auto waves_3 = Sprite::create("/GameSelectionScene/total_waves.png");
     waves_3->setPosition(Vec2(origin.x + visibleSize.width * 2.6,
         origin.y + visibleSize.height * 0.83));
@@ -598,27 +591,27 @@ void Level_1_Layer::create_slide_layer()
     waves_3_txt->setPosition(Vec2(origin.x + visibleSize.width * 2.6,
         origin.y + visibleSize.height * 0.83));
     static_layer->addChild(waves_3_txt);
-    //ÅÚÌ¨ÀàĞÍ  ²»¿É¶¯²ã
-    //Æ¿×Ó
+    //ç‚®å°ç±»å‹  ä¸å¯åŠ¨å±‚
+    //ç“¶å­
     auto tower_3_1 = Sprite::create("/GameSelectionScene/Tower_1.PNG");
     tower_3_1->setPosition(Vec2(origin.x + visibleSize.width * 2.5 - tower_3_1->getContentSize().width,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_3_1);
-    //±ã±ã
+    //ä¾¿ä¾¿
     auto tower_3_2 = Sprite::create("/GameSelectionScene/Tower_2.PNG");
     tower_3_2->setPosition(Vec2(origin.x + visibleSize.width * 2.5,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_3_2);
-    //·çÉÈ
+    //é£æ‰‡
     auto tower_3_3 = Sprite::create("/GameSelectionScene/Tower_3.PNG");
     tower_3_3->setPosition(Vec2(origin.x + visibleSize.width * 2.5 + tower_3_3->getContentSize().width,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_3_3);
-    //¿ªÊ¼ ²»¿É¶¯²ã
+    //å¼€å§‹ ä¸å¯åŠ¨å±‚
     auto level_3_btn = Button::create("/GameSelectionScene/stages_bg-hd_30.PNG", "/GameSelectionScene/stages_bg-hd_28.PNG",
         "/GameSelectionScene/stages_bg-hd_39.PNG");
     level_3_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_3, this));
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//ÈôÎ´½âËø£¬ÔòÉèÖÃ°´Å¥Îª²»¿ÉÓÃ
+    if (SaveManager::getInstance()->getUnlockedLevel() < 3) {//è‹¥æœªè§£é”ï¼Œåˆ™è®¾ç½®æŒ‰é’®ä¸ºä¸å¯ç”¨
         level_3_btn->setEnabled(false);
     }
     level_3_btn->setPosition(Vec2(origin.x + visibleSize.width * 2.5,
@@ -626,19 +619,19 @@ void Level_1_Layer::create_slide_layer()
     static_layer->addChild(level_3_btn);
 
 
-    /*************************  ¹Ø¿¨level_1_4  **************************************/
-    //Í¼
+    /*************************  å…³å¡level_1_4  **************************************/
+    //å›¾
     auto level_1_4_image = Sprite::create("/GameSelectionScene/Level_4.PNG");
     level_1_4_image->setPosition(Vec2(origin.x + visibleSize.width * 3.5,
         origin.y + visibleSize.height * 0.54));
     move_layer->addChild(level_1_4_image);
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {//ÈôÎ´½âËø£¬ÔòäÖÈ¾¡°Ëø¡±ÌáÊ¾
+    if (SaveManager::getInstance()->getUnlockedLevel() < 4) {//è‹¥æœªè§£é”ï¼Œåˆ™æ¸²æŸ“â€œé”â€æç¤º
         auto level_1_4_lock = Sprite::create("/GameSelectionScene/stages_bg-hd_31.PNG");
         level_1_4_lock->setPosition(Vec2(origin.x + visibleSize.width * 3.64,
             origin.y + visibleSize.height * 0.4));
         move_layer->addChild(level_1_4_lock);
     }
-    //¹²¼¸²¨
+    //å…±å‡ æ³¢
     auto waves_4 = Sprite::create("/GameSelectionScene/total_waves.png");
     waves_4->setPosition(Vec2(origin.x + visibleSize.width * 3.6,
         origin.y + visibleSize.height * 0.83));
@@ -648,41 +641,41 @@ void Level_1_Layer::create_slide_layer()
     waves_4_txt->setPosition(Vec2(origin.x + visibleSize.width * 3.6,
         origin.y + visibleSize.height * 0.83));
     static_layer->addChild(waves_4_txt);
-    //ÅÚÌ¨ÀàĞÍ
-    //±ã±ã
+    //ç‚®å°ç±»å‹
+    //ä¾¿ä¾¿
     auto tower_4_1 = Sprite::create("/GameSelectionScene/Tower_2.PNG");
     tower_4_1->setPosition(Vec2(origin.x + visibleSize.width * 3.5 - tower_4_1->getContentSize().width/2,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_4_1);
-    //Ë®¾§Ëş
+    //æ°´æ™¶å¡”
     auto tower_4_2 = Sprite::create("/GameSelectionScene/Tower_5.PNG");
     tower_4_2->setPosition(Vec2(origin.x + visibleSize.width * 3.5 + tower_4_2->getContentSize().width / 2,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_4_2);
-    //¿ªÊ¼
+    //å¼€å§‹
     auto level_4_btn = Button::create("/GameSelectionScene/stages_bg-hd_30.PNG", "/GameSelectionScene/stages_bg-hd_28.PNG",
         "/GameSelectionScene/stages_bg-hd_39.PNG");
     level_4_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_4, this));
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {
+    if (SaveManager::getInstance()->getUnlockedLevel() < 4) {
         level_4_btn->setEnabled(false);
     }
     level_4_btn->setPosition(Vec2(origin.x + visibleSize.width * 3.5,
         origin.y + visibleSize.height * 0.1));
     static_layer->addChild(level_4_btn);
 
-    /*************************  ¹Ø¿¨level_1_5  **************************************/
-    //Í¼
+    /*************************  å…³å¡level_1_5  **************************************/
+    //å›¾
     auto level_1_5_image = Sprite::create("/GameSelectionScene/Level_5.PNG");
     level_1_5_image->setPosition(Vec2(origin.x + visibleSize.width * 4.5,
         origin.y + visibleSize.height * 0.54));
     move_layer->addChild(level_1_5_image);
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//ÈôÎ´½âËø£¬ÔòäÖÈ¾¡°Ëø¡±ÌáÊ¾
+    if (SaveManager::getInstance()->getUnlockedLevel() < 5) {//è‹¥æœªè§£é”ï¼Œåˆ™æ¸²æŸ“â€œé”â€æç¤º
         auto level_1_5_lock = Sprite::create("/GameSelectionScene/stages_bg-hd_31.PNG");
         level_1_5_lock->setPosition(Vec2(origin.x + visibleSize.width * 4.64,
             origin.y + visibleSize.height * 0.4));
         move_layer->addChild(level_1_5_lock);
     }
-    //¹²¼¸²¨
+    //å…±å‡ æ³¢
     auto waves_5 = Sprite::create("/GameSelectionScene/total_waves.png");
     waves_5->setPosition(Vec2(origin.x + visibleSize.width * 4.6,
         origin.y + visibleSize.height * 0.83));
@@ -692,22 +685,22 @@ void Level_1_Layer::create_slide_layer()
     waves_5_txt->setPosition(Vec2(origin.x + visibleSize.width * 4.6,
         origin.y + visibleSize.height * 0.83));
     static_layer->addChild(waves_5_txt);
-    //ÅÚÌ¨ÀàĞÍ
-    //±ã±ã
+    //ç‚®å°ç±»å‹
+    //ä¾¿ä¾¿
     auto tower_5_1 = Sprite::create("/GameSelectionScene/Tower_2.PNG");
     tower_5_1->setPosition(Vec2(origin.x + visibleSize.width * 4.5 - tower_5_1->getContentSize().width / 2,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_5_1);
-    //ĞÇĞÇ
+    //æ˜Ÿæ˜Ÿ
     auto tower_5_2 = Sprite::create("/GameSelectionScene/Tower_4.PNG");
     tower_5_2->setPosition(Vec2(origin.x + visibleSize.width * 4.5 + tower_5_2->getContentSize().width / 2,
         origin.y + visibleSize.height * 0.23));
     static_layer->addChild(tower_5_2);
-    //¿ªÊ¼
+    //å¼€å§‹
     auto level_5_btn = Button::create("/GameSelectionScene/stages_bg-hd_30.PNG", "/GameSelectionScene/stages_bg-hd_28.PNG",
         "/GameSelectionScene/stages_bg-hd_39.PNG");
     level_5_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_5, this));
-    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//ÈôÎ´½âËø£¬ÔòÉèÖÃ°´Å¥Îª²»¿ÉÓÃ
+    if (SaveManager::getInstance()->getUnlockedLevel() < 5) {//è‹¥æœªè§£é”ï¼Œåˆ™è®¾ç½®æŒ‰é’®ä¸ºä¸å¯ç”¨
         level_5_btn->setEnabled(false);
     }
     level_5_btn->setPosition(Vec2(origin.x + visibleSize.width * 4.5,
@@ -716,23 +709,23 @@ void Level_1_Layer::create_slide_layer()
 
 
 
-    /***********************  »¬¶¯ÊµÏÖ  *****************************/
+    /***********************  æ»‘åŠ¨å®ç°  *****************************/
     auto listener4 = EventListenerTouchOneByOne::create();
     listener4->onTouchBegan = [move_layer](Touch* touch, Event* event) {
         return true;
     };
-    listener4->onTouchMoved = [move_layer](Touch* touch, Event* event) {//ÊµÏÖ´¥Ãş»¬¶¯
+    listener4->onTouchMoved = [move_layer](Touch* touch, Event* event) {//å®ç°è§¦æ‘¸æ»‘åŠ¨
         float distance = touch->getLocation().x - touch->getPreviousLocation().x;
         move_layer->setPositionX(move_layer->getPositionX() + distance);
     };
     listener4->onTouchEnded = [=](Touch* touch, Event* event) {
-        //»ñÈ¡´¥ÃşÒÆ¶¯ºáÏò¾àÀë
+        //è·å–è§¦æ‘¸ç§»åŠ¨æ¨ªå‘è·ç¦»
         float distance = touch->getLocation().x - touch->getStartLocation().x;
-        //¼ÇÂ¼Ã¿Ò»Ò³×ø±ê
+        //è®°å½•æ¯ä¸€é¡µåæ ‡
         float page[5] = { 0,-visibleSize.width,-2 * visibleSize.width ,-3 * visibleSize.width ,-4 * visibleSize.width };
         int n = find(page, 5, move_layer->getPosition().x);
 
-        if (distance > visibleSize.width / 6) {//Èô»¬¶¯´óÓÚÁù·ÖÖ®Ò»ÆÁÄ»£¬ÔòÊÓÎª»¬¶¯·­Ò³
+        if (distance > visibleSize.width / 6) {//è‹¥æ»‘åŠ¨å¤§äºå…­åˆ†ä¹‹ä¸€å±å¹•ï¼Œåˆ™è§†ä¸ºæ»‘åŠ¨ç¿»é¡µ
             if (move_layer->getPosition().x > page[0]) {
                 move_layer->runAction(MoveTo::create(0.1, Vec2(page[0], 0)));
             }
@@ -752,8 +745,8 @@ void Level_1_Layer::create_slide_layer()
                 page_sound_effect();
             }
         }
-        else {//ÈôĞ¡ÓÚÁù·ÖÖ®Ò»ÆÁÄ»£¬ÔòÊÓÎªÈ¡Ïû·­Ò³»òµã»÷
-            if (distance > 0) {//ÈôÈ¡Ïû·­Ò³£¬Ôò»Øµ½»¬¶¯Ç°µÄÒ³Âë
+        else {//è‹¥å°äºå…­åˆ†ä¹‹ä¸€å±å¹•ï¼Œåˆ™è§†ä¸ºå–æ¶ˆç¿»é¡µæˆ–ç‚¹å‡»
+            if (distance > 0) {//è‹¥å–æ¶ˆç¿»é¡µï¼Œåˆ™å›åˆ°æ»‘åŠ¨å‰çš„é¡µç 
                 move_layer->runAction(MoveTo::create(0.1, Vec2(page[n + 1], 0)));
                 static_layer->setPosition(Vec2(page[n + 1], static_layer->getPositionY()));
             }
@@ -761,7 +754,7 @@ void Level_1_Layer::create_slide_layer()
                 move_layer->runAction(MoveTo::create(0.1, Vec2(page[n], 0)));
                 static_layer->setPosition(Vec2(page[n], static_layer->getPositionY()));
             }
-            else {//Èôµã»÷£¬Ôò¸ù¾İÊó±êÎ»ÖÃ£¬½øĞĞ¹Ø¿¨Ñ¡Ôñ
+            else {//è‹¥ç‚¹å‡»ï¼Œåˆ™æ ¹æ®é¼ æ ‡ä½ç½®ï¼Œè¿›è¡Œå…³å¡é€‰æ‹©
                 Vec2 pos = move_layer->convertTouchToNodeSpace(touch);
                 if (pos.x > level_1_1_image->getPositionX() - level_1_1_image->getContentSize().width / 2 &&
                     pos.x< level_1_1_image->getPositionX() + level_1_1_image->getContentSize().width / 2 &&
@@ -800,21 +793,21 @@ void Level_1_Layer::create_slide_layer()
             }
         }
     };
-    //½«ÊÂ¼ş¼àÌıÆ÷¼ÓÈëÊÂ¼ş·Ö·¢Æ÷
+    //å°†äº‹ä»¶ç›‘å¬å™¨åŠ å…¥äº‹ä»¶åˆ†å‘å™¨
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener4, move_layer);
 }
-//»Øµ½Ñ¡´ó¹Ø½çÃæ
+//å›åˆ°é€‰å¤§å…³ç•Œé¢
 void Level_1_Layer::return_to_biglevel(Ref* psender)
 {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    auto big_level_layer = BigLevelLayer::createLayer();//´´½¨´ó¹ØLayer
-    this->getParent()->addChild(big_level_layer);//äÖÈ¾
-    this->removeFromParent();//ÒÆ³ıµ±Ç°Layer
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    auto big_level_layer = BigLevelLayer::createLayer();//åˆ›å»ºå¤§å…³Layer
+    this->getParent()->addChild(big_level_layer);//æ¸²æŸ“
+    this->removeFromParent();//ç§»é™¤å½“å‰Layer
 }
-//Ìì¼ÊµÚ1¹Ø
+//å¤©é™…ç¬¬1å…³
 void Level_1_Layer::level_1_1(Ref* psender, Widget::TouchEventType type)
 {
-    //°´Å¥»Øµ÷º¯Êı
+    //æŒ‰é’®å›è°ƒå‡½æ•°
     switch (type) {
         case Widget::TouchEventType::BEGAN:
             break;
@@ -822,15 +815,15 @@ void Level_1_Layer::level_1_1(Ref* psender, Widget::TouchEventType type)
             break;
         case Widget::TouchEventType::CANCELED:
             break;
-        case Widget::TouchEventType::ENDED://µ±ÇÒ½öµ±Ì§ÆğÊ±´¥·¢
-            button_sound_effect();//²¥·ÅÒôĞ§
+        case Widget::TouchEventType::ENDED://å½“ä¸”ä»…å½“æŠ¬èµ·æ—¶è§¦å‘
+            button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
             level_selection = 1;
             auto game_scene = GameScene::createScene();
             Director::getInstance()->replaceScene(game_scene);
             break;
     }
 }
-//Ìì¼ÊµÚ2¹Ø
+//å¤©é™…ç¬¬2å…³
 void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
 {
     switch (type) {
@@ -840,14 +833,14 @@ void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
             break;
         case Widget::TouchEventType::CANCELED:
             break;
-        case Widget::TouchEventType::ENDED://µ±ÇÒ½öµ±Ì§ÆğÊ±´¥·¢
-            button_sound_effect();//²¥·ÅÒôĞ§
+        case Widget::TouchEventType::ENDED://å½“ä¸”ä»…å½“æŠ¬èµ·æ—¶è§¦å‘
+            button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
 
-            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//Èôµ±Ç°¹ØÎ´½âËø£¬µ¯³öÌáÊ¾
+            if (SaveManager::getInstance()->getUnlockedLevel() < 2) {//è‹¥å½“å‰å…³æœªè§£é”ï¼Œå¼¹å‡ºæç¤º
 
                 auto visibleSize = Director::getInstance()->getVisibleSize();
                 Vec2 origin = Director::getInstance()->getVisibleOrigin();
-                /*****************************  ´¿É«²ã  ******************************************/
+                /*****************************  çº¯è‰²å±‚  ******************************************/
                 auto black_layer = LayerColor::create(Color4B::BLACK);
                 black_layer->setOpacity(85);
 
@@ -857,13 +850,13 @@ void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
                 };
                 listener->setSwallowTouches(true);
                 Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-                /********************************  ±³¾°  *****************************************/
+                /********************************  èƒŒæ™¯  *****************************************/
                 auto lock = Sprite::create("/GameSelectionScene/lock_image.png");
                 lock->setPosition(Vec2(origin.x + visibleSize.width / 2,
                     origin.y + visibleSize.height / 2));
                 lock->setScale(1.4);
                 black_layer->addChild(lock);
-                /********************************  °´Å¥  ****************************************/
+                /********************************  æŒ‰é’®  ****************************************/
                 auto menu = Menu::create();
                 menu->setPosition(Vec2::ZERO);
 
@@ -888,7 +881,7 @@ void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
             break;
     }
 }
-//Ìì¼ÊµÚ3¹Ø
+//å¤©é™…ç¬¬3å…³
 void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
 {
     switch (type) {
@@ -898,14 +891,14 @@ void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
             break;
         case Widget::TouchEventType::CANCELED:
             break;
-        case Widget::TouchEventType::ENDED://µ±ÇÒ½öµ±Ì§ÆğÊ±´¥·¢
-            button_sound_effect();//²¥·ÅÒôĞ§
+        case Widget::TouchEventType::ENDED://å½“ä¸”ä»…å½“æŠ¬èµ·æ—¶è§¦å‘
+            button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
 
-            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//ÈôÎ´½âËø£¬µ¯³öÌáÊ¾
+            if (SaveManager::getInstance()->getUnlockedLevel() < 3) {//è‹¥æœªè§£é”ï¼Œå¼¹å‡ºæç¤º
 
                 auto visibleSize = Director::getInstance()->getVisibleSize();
                 Vec2 origin = Director::getInstance()->getVisibleOrigin();
-                /*****************************  ´¿É«²ã  ******************************************/
+                /*****************************  çº¯è‰²å±‚  ******************************************/
                 auto black_layer = LayerColor::create(Color4B::BLACK);
                 black_layer->setOpacity(85);
 
@@ -915,13 +908,13 @@ void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
                 };
                 listener->setSwallowTouches(true);
                 Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-                /********************************  ±³¾°  *****************************************/
+                /********************************  èƒŒæ™¯  *****************************************/
                 auto lock = Sprite::create("/GameSelectionScene/lock_image.png");
                 lock->setPosition(Vec2(origin.x + visibleSize.width / 2,
                     origin.y + visibleSize.height / 2));
                 lock->setScale(1.4);
                 black_layer->addChild(lock);
-                /********************************  °´Å¥  ****************************************/
+                /********************************  æŒ‰é’®  ****************************************/
                 auto menu = Menu::create();
                 menu->setPosition(Vec2::ZERO);
 
@@ -938,13 +931,11 @@ void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
 
                 this->addChild(black_layer, 2);
             }
-            else {
-                ;//level_1_3´ı¿ª·¢
-            }
+            //å¤©é™…ç¬¬3å…³å¾…å¼€å‘
             break;
     }
 }
-//Ìì¼ÊµÚ4¹Ø
+//å¤©é™…ç¬¬4å…³
 void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
 {
     switch (type) {
@@ -954,14 +945,14 @@ void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
             break;
         case Widget::TouchEventType::CANCELED:
             break;
-        case Widget::TouchEventType::ENDED://µ±ÇÒ½öµ±Ì§ÆğÊ±´¥·¢
-            button_sound_effect();//²¥·ÅÒôĞ§
+        case Widget::TouchEventType::ENDED://å½“ä¸”ä»…å½“æŠ¬èµ·æ—¶è§¦å‘
+            button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
 
-            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {//ÈôÎ´½âËø£¬µ¯³öÌáÊ¾
+            if (SaveManager::getInstance()->getUnlockedLevel() < 4) {//è‹¥æœªè§£é”ï¼Œå¼¹å‡ºæç¤º
 
                 auto visibleSize = Director::getInstance()->getVisibleSize();
                 Vec2 origin = Director::getInstance()->getVisibleOrigin();
-                /*****************************  ´¿É«²ã  ******************************************/
+                /*****************************  çº¯è‰²å±‚  ******************************************/
                 auto black_layer = LayerColor::create(Color4B::BLACK);
                 black_layer->setOpacity(85);
 
@@ -971,13 +962,13 @@ void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
                 };
                 listener->setSwallowTouches(true);
                 Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-                /********************************  ±³¾°  *****************************************/
+                /********************************  èƒŒæ™¯  *****************************************/
                 auto lock = Sprite::create("/GameSelectionScene/lock_image.png");
                 lock->setPosition(Vec2(origin.x + visibleSize.width / 2,
                     origin.y + visibleSize.height / 2));
                 lock->setScale(1.4);
                 black_layer->addChild(lock);
-                /********************************  °´Å¥  ****************************************/
+                /********************************  æŒ‰é’®  ****************************************/
                 auto menu = Menu::create();
                 menu->setPosition(Vec2::ZERO);
 
@@ -994,13 +985,11 @@ void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
 
                 this->addChild(black_layer, 2);
             }
-            else {
-                ;//level_1_4´ı¿ª·¢
-            }
+            //å¤©é™…ç¬¬4å…³å¾…å¼€å‘
             break;
     }
 }
-//Ìì¼ÊµÚ5¹Ø
+//å¤©é™…ç¬¬5å…³
 void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
 {
     switch (type) {
@@ -1010,14 +999,14 @@ void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
             break;
         case Widget::TouchEventType::CANCELED:
             break;
-        case Widget::TouchEventType::ENDED://µ±ÇÒ½öµ±Ì§ÆğÊ±´¥·¢
-            button_sound_effect();//²¥·ÅÒôĞ§
+        case Widget::TouchEventType::ENDED://å½“ä¸”ä»…å½“æŠ¬èµ·æ—¶è§¦å‘
+            button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
 
-            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//ÈôÎ´½âËø£¬µ¯³öÌáÊ¾
+            if (SaveManager::getInstance()->getUnlockedLevel() < 5) {//è‹¥æœªè§£é”ï¼Œå¼¹å‡ºæç¤º
 
                 auto visibleSize = Director::getInstance()->getVisibleSize();
                 Vec2 origin = Director::getInstance()->getVisibleOrigin();
-                /*****************************  ´¿É«²ã  ******************************************/
+                /*****************************  çº¯è‰²å±‚  ******************************************/
                 auto black_layer = LayerColor::create(Color4B::BLACK);
                 black_layer->setOpacity(85);
 
@@ -1027,13 +1016,13 @@ void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
                 };
                 listener->setSwallowTouches(true);
                 Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-                /********************************  ±³¾°  *****************************************/
+                /********************************  èƒŒæ™¯  *****************************************/
                 auto lock = Sprite::create("/GameSelectionScene/lock_image.png");
                 lock->setPosition(Vec2(origin.x + visibleSize.width / 2,
                     origin.y + visibleSize.height / 2));
                 lock->setScale(1.4);
                 black_layer->addChild(lock);
-                /********************************  °´Å¥  ****************************************/
+                /********************************  æŒ‰é’®  ****************************************/
                 auto menu = Menu::create();
                 menu->setPosition(Vec2::ZERO);
 
@@ -1050,9 +1039,7 @@ void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
 
                 this->addChild(black_layer, 2);
             }
-            else {
-                ;//level_1_5´ı¿ª·¢
-            }
+            //å¤©é™…ç¬¬5å…³å¾…å¼€å‘
             break;
     }
 }

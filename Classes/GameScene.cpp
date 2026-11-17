@@ -1,9 +1,10 @@
-#include"Level_1_1.h"
+ï»¿#include"Level_1_1.h"
 #include"Level_1_2.h"
 #include"GameScene.h"
 #include"GameSelectionScene.h"
 #include"sound&music.h"
 #include"GameData.h"
+#include"SaveManager.h"
 #include"ui/CocosGUI.h"
 #include"Tower.h"
 #include"Enemy.h"
@@ -12,65 +13,80 @@
 #include<vector>
 USING_NS_CC;
 using namespace cocos2d::ui;
-/*******************************  ´íÎó´¦Àí  ************************************/
+/*******************************  é”™è¯¯å¤„ç†  ************************************/
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
 }
-/**********************  È«¾Ö±äÁ¿  ***********************/
-//¹Ø¿¨Ñ¡Ïî
-int level_selection;//¹Ø¿¨Ñ¡Ôñ
-int if_speed_up;//ÊÇ·ñ¼ÓËÙ
-int if_pause;//ÊÇ·ñÔİÍ£
-//ÓÎÏ·ÄÚÊı¾İ
-int game_money;//½ğÇ®
-int game_waves;//µ±Ç°²¨Êı
-int max_waves;//×Ü²¨Êı
-char game_map[7][12];//¸¨ÖúµØÍ¼Êı×é
-int carrot_hp;//¼ÇÂ¼ÂÜ²·ÑªÁ¿
-int carrot_level;//¼ÇÂ¼ÂÜ²·µÈ¼¶
-pos carrot_position;//¼ÇÂ¼ÂÜ²·Î»ÖÃ
-int tower_available[3];//¿É½¨Ôì·ÀÓùËş´æ´¢
-Tower* tower_map[7][12];//´¢´æ·ÀÓùËşĞÅÏ¢µÄÊı×é
+/**********************  å…¨å±€å˜é‡  ***********************/
+//å…³å¡é€‰é¡¹
+int level_selection;//å…³å¡é€‰æ‹©
+int if_speed_up;//æ˜¯å¦åŠ é€Ÿ
+int if_pause;//æ˜¯å¦æš‚åœ
+//æ¸¸æˆå†…æ•°æ®
+int game_money;//é‡‘é’±
+int game_waves;//å½“å‰æ³¢æ•°
+int max_waves;//æ€»æ³¢æ•°
+char game_map[7][12];//è¾…åŠ©åœ°å›¾æ•°ç»„
+int carrot_hp;//è®°å½•èåœè¡€é‡
+int carrot_level;//è®°å½•èåœç­‰çº§
+pos carrot_position;//è®°å½•èåœä½ç½®
+int tower_available[3];//å¯å»ºé€ é˜²å¾¡å¡”å­˜å‚¨
+Tower* tower_map[7][12];//å‚¨å­˜é˜²å¾¡å¡”ä¿¡æ¯çš„æ•°ç»„
 Enemy* destination;
 vector<LevelPath> levelPath;
 vector<Enemy*> barrier;
 vector<Enemy*> monster;
 int all_clear;
-//ÓÎÏ·Í³¼ÆÊı¾İ
-int money_total;//»÷É±»ñµÃ½ğÇ®×ÜÊı
-int monster_total;//»÷É±¹ÖÎï×ÜÊı
-int boss_total;//»÷É±boss×ÜÊı
-int barrier_total;//´İ»ÙÕÏ°­×ÜÊı
+//æ¸¸æˆç»Ÿè®¡æ•°æ®
+int money_total;//å‡»æ€è·å¾—é‡‘é’±æ€»æ•°
+int monster_total;//å‡»æ€æ€ªç‰©æ€»æ•°
+int boss_total;//å‡»æ€bossæ€»æ•°
+int barrier_total;//æ‘§æ¯éšœç¢æ€»æ•°
+//ç¦»å¼€å…³å¡æ—¶é‡Šæ”¾æœ¬å±€è¿è¡Œæ€ï¼Œé¿å…å…¨å±€è£¸æŒ‡é’ˆæ®‹ç•™
+static void release_battle_runtime()
+{
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 12; j++) {
+            if (tower_map[i][j] != nullptr) {
+                delete tower_map[i][j];
+                tower_map[i][j] = nullptr;
+            }
+        }
+    }
+    monster.clear();
+    barrier.clear();
+    destination = nullptr;
+}
 /**********************************  GameScene  ***********************************/
 Scene* GameScene::createScene()
 {
     return GameScene::create();
 }
-/*³õÊ¼»¯*/
+/*åˆå§‹åŒ–*/
 bool GameScene::init()
 {
     if (!Scene::init()) {
         return false;
     }
-    /**********************  ²¿·ÖÈ«¾Ö±äÁ¿³õÊ¼»¯  **********************/
-    if_speed_up = 0;//Ä¬ÈÏ²»¼ÓËÙ
-    if_pause = 0;//Ä¬ÈÏ²»ÔİÍ£
-    carrot_hp = 10;//Ä¬ÈÏÂÜ²·ÑªÁ¿10
-    //Ä¬ÈÏÍ³¼ÆÎª0
+    /**********************  éƒ¨åˆ†å…¨å±€å˜é‡åˆå§‹åŒ–  **********************/
+    if_speed_up = 0;//é»˜è®¤ä¸åŠ é€Ÿ
+    if_pause = 0;//é»˜è®¤ä¸æš‚åœ
+    carrot_hp = 10;//é»˜è®¤èåœè¡€é‡10
+    //é»˜è®¤ç»Ÿè®¡ä¸º0
     money_total = 0;
     monster_total = 0;
     boss_total = 0;
     barrier_total = 0;
     destination = nullptr;
     all_clear = 0;
-    //½øÈë¹Ø¿¨Ç°Çå¿ÕÅÚÌ¨Ó³Éä£¬±ÜÃâÉÏÒ»¾Ö²ĞÁôµÄÖ¸Õë±»ÎóÓÃ
+    //è¿›å…¥å…³å¡å‰æ¸…ç©ºç‚®å°æ˜ å°„ï¼Œé¿å…ä¸Šä¸€å±€æ®‹ç•™çš„æŒ‡é’ˆè¢«è¯¯ç”¨
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
             tower_map[i][j] = nullptr;
         }
     }
-    /**********************  Ñ¡¹Ø  ******************************/
+    /**********************  é€‰å…³  ******************************/
     if (level_selection == 1) {
         auto level_1_1 = Level_1_1::createLayer();
         level_1_1->setName("PlayingLevel");
@@ -81,38 +97,39 @@ bool GameScene::init()
         level_1_2->setName("PlayingLevel");
         this->addChild(level_1_2, -1);
     }
+    Enemy::reset_static_state();
     auto enemycreate = EnemyCreate::create();
     enemycreate->setName("EnemyCreate");
     this->addChild(enemycreate);
     static_cast<EnemyCreate*>(enemycreate)->SetLevel(level_selection);
     static_cast<EnemyCreate*>(enemycreate)->start();
-    /***********************  ²Ëµ¥²ã  ***************************/
+    /***********************  èœå•å±‚  ***************************/
     auto menu_layer = GameMenu::createLayer();
     menu_layer->setName("GameMenu");
     this->addChild(menu_layer, 1);
 
     return true;
 }
-/*ÖØÖÃ²Ëµ¥½çÃæ*/
+/*é‡ç½®èœå•ç•Œé¢*/
 void GameScene::reset_menu() {
     //
     // 
     // 
-    // _mapÖØÖÃ
+    // _mapé‡ç½®
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
             if (tower_map[i][j] != nullptr) {
-                delete tower_map[i][j];//ÊÍ·ÅÉÏÒ»¾ÖµÄÅÚÌ¨£¬±ÜÃâ tower_map ÀïÁôÏÂĞü¿ÕÖ¸Õë
+                delete tower_map[i][j];//é‡Šæ”¾ä¸Šä¸€å±€çš„ç‚®å°ï¼Œé¿å… tower_map é‡Œç•™ä¸‹æ‚¬ç©ºæŒ‡é’ˆ
                 tower_map[i][j] = nullptr;
             }
         }
     }
-    //GameMenuÖØÖÃ
+    //GameMenué‡ç½®
     this->removeChildByName("GameMenu");
     auto menu_layer = GameMenu::createLayer();
     menu_layer->setName("GameMenu");
     this->addChild(menu_layer, 1);
-    //È«¾Ö±äÁ¿ÖØÖÃ
+    //å…¨å±€å˜é‡é‡ç½®
     carrot_hp = 10;
     money_total = 0;
     monster_total = 0;
@@ -129,29 +146,29 @@ Layer* GameMenu::createLayer()
 {
     return GameMenu::create();
 }
-//³õÊ¼»¯
+//åˆå§‹åŒ–
 bool GameMenu::init()
 {
     if (!Layer::init()) {
         return false;
     }
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    //±³¾°
+    //èƒŒæ™¯
     auto menu_image = Sprite::create("/GameScene/touming-hd.pvr_13.PNG");
     menu_image->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height - menu_image->getContentSize().height / 2));
     menu_image->setOpacity(230);
     this->addChild(menu_image);
-    //½ğÇ®ÏÔÊ¾
+    //é‡‘é’±æ˜¾ç¤º
     auto money_label = Label::createWithTTF(to_string(game_money), "/fonts/Marker Felt.ttf", 32);
     money_label->setName("MoneyLabel");
     money_label->setAnchorPoint(Vec2(0, 0.5));
     money_label->setPosition(Vec2(origin.x + visibleSize.width * 0.1,
         origin.y + visibleSize.height * 0.95));
     this->addChild(money_label);
-    //²¨ÊıÏÔÊ¾
+    //æ³¢æ•°æ˜¾ç¤º
     auto waves_image = Sprite::create("/GameScene/gameover0-hd_0.PNG");
     waves_image->setPosition(Vec2(origin.x + visibleSize.width * 0.4,
         origin.y + visibleSize.height * 0.95));
@@ -166,7 +183,7 @@ bool GameMenu::init()
     waves_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.525,
         origin.y + visibleSize.height * 0.94));
     this->addChild(waves_txt);
-    //±¶ËÙ¿ª¹Ø
+    //å€é€Ÿå¼€å…³
     auto menu = Menu::create();
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu);
@@ -175,8 +192,8 @@ bool GameMenu::init()
     auto speed_up_off_sprite = Sprite::create("/GameScene/touming-hd.pvr_9.PNG");
     auto speed_up_off = MenuItemSprite::create(speed_up_off_sprite, speed_up_off_sprite);
     auto speed_toggle = MenuItemToggle::createWithCallback([&](Ref* psender) {
-        button_sound_effect();//²¥·ÅÒôĞ§
-        if (if_speed_up == 0) {//Èô¹´Ñ¡£¬Ôò±íÊ¾¿ªÆô¶ş±¶ËÙ
+        button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+        if (if_speed_up == 0) {//è‹¥å‹¾é€‰ï¼Œåˆ™è¡¨ç¤ºå¼€å¯äºŒå€é€Ÿ
             if_speed_up = 1;
         }
         else {
@@ -186,8 +203,8 @@ bool GameMenu::init()
     speed_toggle->setPosition(Vec2(origin.x + visibleSize.width * 0.7,
         origin.y + visibleSize.height * 0.94));
     menu->addChild(speed_toggle);
-    //ÔİÍ£¿ª¹Ø
-    //ÔİÍ£½çÃæÌáÊ¾
+    //æš‚åœå¼€å…³
+    //æš‚åœç•Œé¢æç¤º
     auto paused = Sprite::create("/GameScene/paused.png");
     paused->setScale(1.4);
     paused->setPosition(Vec2(origin.x + visibleSize.width / 2,
@@ -199,8 +216,8 @@ bool GameMenu::init()
     auto pause_on_sprite = Sprite::create("/GameScene/touming-hd.pvr_11.PNG");
     auto pause_on = MenuItemSprite::create(pause_on_sprite, pause_on_sprite);
     auto pause_toggle = MenuItemToggle::createWithCallback([=](Ref* psender) {
-        button_sound_effect();//²¥·ÅÒôĞ§
-        if (if_pause == 0) {//Èô¹´Ñ¡£¬Ôò±íÊ¾ÔİÍ£
+        button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+        if (if_pause == 0) {//è‹¥å‹¾é€‰ï¼Œåˆ™è¡¨ç¤ºæš‚åœ
             if_pause = 1;
             paused->setVisible(true);
             waves_image->setVisible(false);
@@ -218,7 +235,7 @@ bool GameMenu::init()
     pause_toggle->setPosition(Vec2(origin.x + visibleSize.width * 0.8,
         origin.y + visibleSize.height * 0.94));
     menu->addChild(pause_toggle);
-    //Ñ¡Ïî
+    //é€‰é¡¹
     auto options_btn = Button::create("/GameScene/touming-hd.pvr_28.PNG", "/GameScene/touming-hd.pvr_26.PNG");
     options_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.88,
         origin.y + visibleSize.height * 0.94));
@@ -231,13 +248,13 @@ bool GameMenu::init()
             case Button::TouchEventType::CANCELED:
                 break;
             case Button::TouchEventType::ENDED:
-                button_sound_effect();//²¥·ÅÒôĞ§
+                button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
                 options();
                 break;
         }
         });
     this->addChild(options_btn);
-    //´¥Ãş¸ñµã
+    //è§¦æ‘¸æ ¼ç‚¹
     Sprite* grid[7][12];
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
@@ -249,7 +266,7 @@ bool GameMenu::init()
         }
     }
 
-    //ÂÜ²·
+    //èåœ
     vec2 carrot_pos = trans_ij_to_xy(carrot_position);
     carrot_level = 1;
     auto carrot = Sprite::create();
@@ -259,7 +276,7 @@ bool GameMenu::init()
     carrot->setAnchorPoint(Vec2{ 0.3, 0.2 });
     //tower_map[carrot_position.i][carrot_position.j] = { CARROT, 0, 0, 0, 1, 0, 1 };
     this->addChild(carrot);
-    //ÂÜ²·ÑªÁ¿
+    //èåœè¡€é‡
     auto carrot_hp_image = Sprite::create();
     carrot_hp_image->setTexture("/Carrot/Hp.png");
     carrot_hp_image->setAnchorPoint(Vec2{ 0,0.5 });
@@ -273,9 +290,9 @@ bool GameMenu::init()
         carrot_pos.y + carrot->getContentSize().height * 0.3));
     this->addChild(hp_label);
 
-    //ÓÎÏ·¿ªÊ¼µÄµ¹¼ÆÊ±
+    //æ¸¸æˆå¼€å§‹çš„å€’è®¡æ—¶
     start();
-    //ÓÎÏ·¿ªÊ¼ºóµÄ´¥ÃşÊÂ¼ş
+    //æ¸¸æˆå¼€å§‹åçš„è§¦æ‘¸äº‹ä»¶
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [=](Touch* touch, Event* event) {
@@ -294,7 +311,7 @@ bool GameMenu::init()
             vec.x = touch->getLocation().x;
             vec.y = touch->getLocation().y;
             pos position = trans_xy_to_ij(vec);
-            //µã»÷ÂäÔÚÆåÅÌÍâÊ±Ö±½ÓºöÂÔ£¬·ñÔò game_map/tower_map »áÔ½½ç·ÃÎÊ
+            //ç‚¹å‡»è½åœ¨æ£‹ç›˜å¤–æ—¶ç›´æ¥å¿½ç•¥ï¼Œå¦åˆ™ game_map/tower_map ä¼šè¶Šç•Œè®¿é—®
             if (position.i < 0 || position.i > 6 || position.j < 0 || position.j > 11) return;
             if (game_map[position.i][position.j] != DISABLED) {
                 Node* node = this->getChildByTag(100 * position.i + position.j);
@@ -358,64 +375,70 @@ bool GameMenu::init()
         }
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-    //µ÷ÓÃµ÷¶ÈÆ÷
+    //è°ƒç”¨è°ƒåº¦å™¨
     this->scheduleUpdate();
     return true;
 }
-//Ê§°Ü
+void GameMenu::commitBattleStats(int money, int monsters, int bosses, int barriers)
+{
+    SaveManager* save = SaveManager::getInstance();
+    save->addMoney(money);
+    save->addMonster(monsters);
+    save->addBoss(bosses);
+    save->addBarrier(barriers);
+    save->flush();
+}
+//å¤±è´¥
 void GameMenu::lose() {
     if_pause = 1;
-    /*******************************  Êı¾İ¸üĞÂ  *****************************/
-    UserDefault::getInstance()->setIntegerForKey("money_statistics", UserDefault::getInstance()->getIntegerForKey("money_statistics") + money_total);
-    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + monster_total);
-    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + boss_total);
-    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + barrier_total);
-    /********************************  ÏÔÊ¾  ******************************/
+    /*******************************  æ•°æ®æ›´æ–°  *****************************/
+    commitBattleStats(money_total, monster_total, boss_total, barrier_total);
+    /********************************  æ˜¾ç¤º  ******************************/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /************************  ´¿É«²ã  *****************************/
+    /************************  çº¯è‰²å±‚  *****************************/
     auto black_layer = LayerColor::create(Color4B::BLACK);
     black_layer->setPosition(Vec2::ZERO);
     black_layer->setOpacity(90);
     this->addChild(black_layer, 1);
-    /************************  ÊÂ¼ş¼àÌıÆ÷  *****************************/
+    /************************  äº‹ä»¶ç›‘å¬å™¨  *****************************/
     auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);//ÉèÖÃÍÌÃ»£¬ÒÔÈ·±£±ØĞë°´°´Å¥²ÅÄÜ·µ»ØÉÏÒ»Ò³
+    listener->setSwallowTouches(true);//è®¾ç½®åæ²¡ï¼Œä»¥ç¡®ä¿å¿…é¡»æŒ‰æŒ‰é’®æ‰èƒ½è¿”å›ä¸Šä¸€é¡µ
     listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
         return true;
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
 
-    /******************  ±³¾°  ***************************/
+    /******************  èƒŒæ™¯  ***************************/
     auto lose_bg = Sprite::create("/GameScene/lose.png");
     lose_bg->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 2));
     lose_bg->setScale(1.7);
     black_layer->addChild(lose_bg);
-    //µ±Ç°²¨ÊıÏÔÊ¾
+    //å½“å‰æ³¢æ•°æ˜¾ç¤º
     auto waves_label = Label::createWithTTF(to_string(game_waves / 10 % 10) + "   " + to_string(game_waves % 10), "/fonts/Marker Felt.ttf", 32);
     waves_label->setColor(Color3B::YELLOW);
     waves_label->setPosition(Vec2(origin.x + visibleSize.width * 0.475,
         origin.y + visibleSize.height * 0.52));
     black_layer->addChild(waves_label);
-    //²¨ÊıÏÔÊ¾
+    //æ³¢æ•°æ˜¾ç¤º
     auto waves_txt = Label::createWithTTF(to_string(max_waves), "/fonts/Marker Felt.ttf", 32);
     waves_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.58,
         origin.y + visibleSize.height * 0.52));
     black_layer->addChild(waves_txt);
-    //¹Ø¿¨ÏÔÊ¾
+    //å…³å¡æ˜¾ç¤º
     auto level_txt = Label::createWithTTF("0" + to_string(level_selection), "/fonts/Marker Felt.ttf", 32);
     level_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.4,
         origin.y + visibleSize.height * 0.43));
     black_layer->addChild(level_txt);
-    /*******************  ²Ëµ¥  **************************/
+    /*******************  èœå•  **************************/
     auto options_menu = Menu::create();
     options_menu->setPosition(Vec2::ZERO);
     black_layer->addChild(options_menu);
-    //ÖØĞÂ¿ªÊ¼
+    //é‡æ–°å¼€å§‹
     auto again_btn = MenuItemImage::create("/GameScene/again_normal.png", "/GameScene/again_selected.png");
     again_btn->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.3));
-    again_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    again_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
         this->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
@@ -439,74 +462,77 @@ void GameMenu::lose() {
         static_cast<GameScene*>(this->getParent())->reset_menu();
         });
     options_menu->addChild(again_btn);
-    //Ñ¡Ôñ¹Ø¿¨
+    //é€‰æ‹©å…³å¡
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
-    return_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    return_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
+        release_battle_runtime();
         Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         });
     options_menu->addChild(return_btn);
 
 }
-//Ê¤Àû
+//èƒœåˆ©
 void GameMenu::win() {
     if_pause = 1;
-    /*******************************  Êı¾İ¸üĞÂ  *****************************/
-    UserDefault::getInstance()->setIntegerForKey("money_statistics", UserDefault::getInstance()->getIntegerForKey("money_statistics") + money_total);
-    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + monster_total);
-    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + boss_total);
-    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + barrier_total);
-    /********************************  ÏÔÊ¾  ******************************/
+    /*******************************  æ•°æ®æ›´æ–°  *****************************/
+    commitBattleStats(money_total, monster_total, boss_total, barrier_total);
+    /********************************  æ˜¾ç¤º  ******************************/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /************************  »ñÊ¤  ******************************/
-    UserDefault::getInstance()->setIntegerForKey("adventure_statistics", level_selection + 1);
-    UserDefault::getInstance()->setIntegerForKey("level_1", level_selection + 1);
-    /************************  ´¿É«²ã  *****************************/
+    /************************  è·èƒœ  ******************************/
+    SaveManager::getInstance()->setAdventureStatistic(level_selection + 1);
+    const int currentUnlocked = SaveManager::getInstance()->getUnlockedLevel();
+    const int clearedLevel = level_selection + 1;
+    const int newUnlocked = clearedLevel > currentUnlocked ? clearedLevel : currentUnlocked;
+    SaveManager::getInstance()->setUnlockedLevel(newUnlocked);
+    SaveManager::getInstance()->syncThemeUnlocksWithProgress();
+    SaveManager::getInstance()->flush();
+    /************************  çº¯è‰²å±‚  *****************************/
     auto black_layer = LayerColor::create(Color4B::BLACK);
     black_layer->setPosition(Vec2::ZERO);
     black_layer->setOpacity(90);
     this->addChild(black_layer, 1);
-    /************************  ÊÂ¼ş¼àÌıÆ÷  *****************************/
+    /************************  äº‹ä»¶ç›‘å¬å™¨  *****************************/
     auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);//ÉèÖÃÍÌÃ»£¬ÒÔÈ·±£±ØĞë°´°´Å¥²ÅÄÜ·µ»ØÉÏÒ»Ò³
+    listener->setSwallowTouches(true);//è®¾ç½®åæ²¡ï¼Œä»¥ç¡®ä¿å¿…é¡»æŒ‰æŒ‰é’®æ‰èƒ½è¿”å›ä¸Šä¸€é¡µ
     listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
         return true;
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
 
-    /******************  ±³¾°  ***************************/
+    /******************  èƒŒæ™¯  ***************************/
     auto win_bg = Sprite::create("/GameScene/win.png");
     win_bg->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 2));
     win_bg->setScale(1.7);
     black_layer->addChild(win_bg);
-    //µ±Ç°²¨ÊıÏÔÊ¾
+    //å½“å‰æ³¢æ•°æ˜¾ç¤º
     auto waves_label = Label::createWithTTF(to_string(game_waves / 10 % 10) + "   " + to_string(game_waves % 10), "/fonts/Marker Felt.ttf", 32);
     waves_label->setColor(Color3B::YELLOW);
     waves_label->setPosition(Vec2(origin.x + visibleSize.width * 0.475,
         origin.y + visibleSize.height * 0.51));
     black_layer->addChild(waves_label);
-    //²¨ÊıÏÔÊ¾
+    //æ³¢æ•°æ˜¾ç¤º
     auto waves_txt = Label::createWithTTF(to_string(max_waves), "/fonts/Marker Felt.ttf", 32);
     waves_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.58,
         origin.y + visibleSize.height * 0.51));
     black_layer->addChild(waves_txt);
-    //¹Ø¿¨ÏÔÊ¾
+    //å…³å¡æ˜¾ç¤º
     auto level_txt = Label::createWithTTF("0" + to_string(level_selection), "/fonts/Marker Felt.ttf", 32);
     level_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.4,
         origin.y + visibleSize.height * 0.42));
     level_txt->setColor(Color3B::YELLOW);
     black_layer->addChild(level_txt);
-    /*******************  ²Ëµ¥  **************************/
+    /*******************  èœå•  **************************/
     auto options_menu = Menu::create();
     options_menu->setPosition(Vec2::ZERO);
     black_layer->addChild(options_menu);
-    //¼ÌĞøÓÎÏ·
+    //ç»§ç»­æ¸¸æˆ
     auto resume_btn = MenuItemImage::create("/GameScene/resume_normal.png", "/GameScene/resume_selected.png");
     resume_btn->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.3));
-    resume_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    resume_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
         this->getParent()->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
@@ -524,35 +550,37 @@ void GameMenu::win() {
         }
         else if (level_selection == 2) {
             log("To be continued");
-            Director::getInstance()->replaceScene(GameSelectionScene::createScene());
+            release_battle_runtime();
+        Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         }
         });
     options_menu->addChild(resume_btn);
-    //Ñ¡Ôñ¹Ø¿¨
+    //é€‰æ‹©å…³å¡
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
-    return_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    return_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
+        release_battle_runtime();
         Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         });
     options_menu->addChild(return_btn);
 
 }
-//ÖØĞ´updateº¯Êı
+//é‡å†™updateå‡½æ•°
 void GameMenu::update(float dt) {
-    //ÊµÊ±¸üĞÂ½ğÇ®Êı¾İ
+    //å®æ—¶æ›´æ–°é‡‘é’±æ•°æ®
     Node* money_node = this->getChildByName("MoneyLabel");
     Label* money_label = static_cast<Label*>(money_node);
     money_label->setString(to_string(game_money));
-    //ÊµÊ±¸üĞÂ²¨Êı
+    //å®æ—¶æ›´æ–°æ³¢æ•°
     Node* waves_node = this->getChildByName("WavesLabel");
     Label* waves_label = static_cast<Label*>(waves_node);
     waves_label->setString(to_string(game_waves / 10 % 10) + "   " + to_string(game_waves % 10));
-    //ÊµÊ±¸üĞÂÂÜ²·ÉúÃüÖµ
+    //å®æ—¶æ›´æ–°èåœç”Ÿå‘½å€¼
     Node* hp_node = this->getChildByName("HpLabel");
     Label* hp_label = static_cast<Label*>(hp_node);
     hp_label->setString(to_string(carrot_hp));
-    //¸ù¾İÂÜ²·ÉúÃüÖµ¸üĞÂÂÜ²·Íâ¹Û
+    //æ ¹æ®èåœç”Ÿå‘½å€¼æ›´æ–°èåœå¤–è§‚
     Node* carrot_node = this->getChildByName("Carrot");
     Sprite* carrot_image = static_cast<Sprite*>(carrot_node);
     switch (carrot_hp) {
@@ -592,7 +620,7 @@ void GameMenu::update(float dt) {
             carrot_image->setTexture("/Carrot/HP_MAX.PNG");
             break;
     }
-    //ÅĞ¶ÏÊ¤ÀûÊ§°Ü
+    //åˆ¤æ–­èƒœåˆ©å¤±è´¥
     if (carrot_hp <= 0) {
         this->unscheduleUpdate();
         lose();
@@ -602,48 +630,48 @@ void GameMenu::update(float dt) {
         win();
     }
 }
-//ÉèÖÃ½çÃæ
+//è®¾ç½®ç•Œé¢
 void GameMenu::options() {
-    button_sound_effect();//²¥·ÅÒôĞ§
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    button_sound_effect();//æ’­æ”¾éŸ³æ•ˆ
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /************************  ´¿É«²ã  *****************************/
+    /************************  çº¯è‰²å±‚  *****************************/
     if_pause = 1;
     auto black_layer = LayerColor::create(Color4B::BLACK);
     black_layer->setPosition(Vec2::ZERO);
     black_layer->setOpacity(90);
     this->addChild(black_layer, 1);
-    /************************  ÊÂ¼ş¼àÌıÆ÷  *****************************/
+    /************************  äº‹ä»¶ç›‘å¬å™¨  *****************************/
     auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);//ÉèÖÃÍÌÃ»£¬ÒÔÈ·±£±ØĞë°´°´Å¥²ÅÄÜ·µ»ØÉÏÒ»Ò³
+    listener->setSwallowTouches(true);//è®¾ç½®åæ²¡ï¼Œä»¥ç¡®ä¿å¿…é¡»æŒ‰æŒ‰é’®æ‰èƒ½è¿”å›ä¸Šä¸€é¡µ
     listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
         return true;
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
 
-    /******************  ±³¾°  ***************************/
+    /******************  èƒŒæ™¯  ***************************/
     auto options_bg = Sprite::create("/GameScene/options_bg.png");
     options_bg->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 2));
     black_layer->addChild(options_bg);
-    /*******************  ²Ëµ¥  **************************/
+    /*******************  èœå•  **************************/
     auto options_menu = Menu::create();
     options_menu->setPosition(Vec2::ZERO);
     black_layer->addChild(options_menu);
-    //¼ÌĞøÓÎÏ·
+    //ç»§ç»­æ¸¸æˆ
     auto resume_btn = MenuItemImage::create("/GameScene/resume_normal.png", "/GameScene/resume_selected.png");
     resume_btn->setPosition(Vec2(visibleSize.width *0.49, visibleSize.height * 0.67));
-    resume_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    resume_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
         this->removeChild(black_layer);
         if_pause = 0;
         });
     options_menu->addChild(resume_btn);
-    //ÖØĞÂ¿ªÊ¼
+    //é‡æ–°å¼€å§‹
     auto restart_btn = MenuItemImage::create("/GameScene/restart_normal.png", "/GameScene/restart_selected.png");
     restart_btn->setPosition(Vec2(visibleSize.width *0.49, visibleSize.height * 0.52));
-    restart_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    restart_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
         this->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
@@ -666,25 +694,26 @@ void GameMenu::options() {
         if_pause = 0;
         });
     options_menu->addChild(restart_btn);
-    //Ñ¡Ôñ¹Ø¿¨
+    //é€‰æ‹©å…³å¡
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width *0.49, visibleSize.height * 0.37));
-    return_btn->setCallback([this, black_layer](Ref* psender) {//°´Å¥»Øµ÷ÊÂ¼ş£¬·µ»ØÉÏÒ»¼¶
+    return_btn->setCallback([this, black_layer](Ref* psender) {//æŒ‰é’®å›è°ƒäº‹ä»¶ï¼Œè¿”å›ä¸Šä¸€çº§
         button_sound_effect();
+        release_battle_runtime();
         Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         });
     options_menu->addChild(return_btn);
 
 }
-//¿ªÊ¼
+//å¼€å§‹
 void GameMenu::start()
 {   
-    //»ñÈ¡ÆÁÄ»´óĞ¡
+    //è·å–å±å¹•å¤§å°
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    //µ¹¼ÆÊ±µÄÊ±ºòÓÎÏ·ÊÇÔİÍ£µÄ
+    //å€’è®¡æ—¶çš„æ—¶å€™æ¸¸æˆæ˜¯æš‚åœçš„
     if_pause = 1;
-    //µ¹¼ÆÊ±Ò³
+    //å€’è®¡æ—¶é¡µ
     auto time_layer = Layer::create();
     this->addChild(time_layer);
     auto listener = EventListenerTouchOneByOne::create();
@@ -693,30 +722,30 @@ void GameMenu::start()
         return true;
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, time_layer);
-    //µ¹¼ÆÊ±±³¾°ÅÌ
+    //å€’è®¡æ—¶èƒŒæ™¯ç›˜
     auto panel = Sprite::create("/GameScene/Items02-hd_165.PNG");
     panel->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 2));
     time_layer->addChild(panel);
-    //µ¹¼ÆÊ±Êı×Ö
+    //å€’è®¡æ—¶æ•°å­—
     auto number = Sprite::create("/GameScene/Items02-hd_68.PNG");
     number->setPosition(Vec2(origin.x + visibleSize.width * 0.51,
         origin.y + visibleSize.height / 2));
     time_layer->addChild(number);
-    //µ¹¼ÆÊ±×ªÈ¦
+    //å€’è®¡æ—¶è½¬åœˆ
     auto circle = Sprite::create("/GameScene/Items02-hd_50.PNG");
     circle->setPosition(Vec2(origin.x + visibleSize.width / 2,
         origin.y + visibleSize.height / 2));
     time_layer->addChild(circle);
     circle->runAction(Sequence::create(Repeat::create(RotateBy::create(1, -360), 3), FadeOut::create(0.1), nullptr));
     panel->runAction(Sequence::create(DelayTime::create(3), FadeOut::create(0.1), nullptr));
-   //ÀûÓÃÖ¡¶¯»­Íê³ÉÊı×ÖµÄµ¹¼ÆÊ±
+   //åˆ©ç”¨å¸§åŠ¨ç”»å®Œæˆæ•°å­—çš„å€’è®¡æ—¶
     Vector<SpriteFrame*> frame;
     frame.pushBack(SpriteFrame::create("/GameScene/Items02-hd_68.PNG", Rect(0, 0, 95, 114)));
     frame.pushBack(SpriteFrame::create("/GameScene/Items02-hd_92.PNG", Rect(0, 0, 95, 114)));
     frame.pushBack(SpriteFrame::create("/GameScene/Items02-hd_88.PNG", Rect(0, 0, 95, 114)));
     number->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 1)),FadeOut::create(0.1),nullptr));
-    //µ¹¼ÆÊ±µÄÊ±ºòËùÓĞ¿ÉÓÃ¸ñµãÉÁË¸
+    //å€’è®¡æ—¶çš„æ—¶å€™æ‰€æœ‰å¯ç”¨æ ¼ç‚¹é—ªçƒ
     Sprite* grid[7][12];
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
@@ -727,7 +756,7 @@ void GameMenu::start()
             }
         }
     }
-    //ÈıÃëºó°ÑÕÚÕÖ²ãÉ¾³ı
+    //ä¸‰ç§’åæŠŠé®ç½©å±‚åˆ é™¤
     auto start_call_back = CallFunc::create([=]() {
         this->removeChild(time_layer);
         });
@@ -735,23 +764,23 @@ void GameMenu::start()
     if_pause = 0;
 
 }
-//½¨Ôì
+//å»ºé€ 
 void GameMenu::build(pos position, int tower_available[]) {
-    //´´½¨ÕÚÕÖ²ã
+    //åˆ›å»ºé®ç½©å±‚
     auto touch_layer = Layer::create();
     this->addChild(touch_layer);
-    //ÏÔÊ¾
+    //æ˜¾ç¤º
     Node* node = this->getChildByTag(100 * position.i + position.j);
     Sprite* sprite = static_cast<Sprite*>(node);
     sprite->setTexture("/GameScene/Grid.png");
     sprite->setVisible(true);
-    //ÅÚÌ¨½¨Ôì
+    //ç‚®å°å»ºé€ 
     auto sprite_1 = Sprite::create();
     auto sprite_2 = Sprite::create();
     auto sprite_3 = Sprite::create();
     if (tower_available[2] == -1) {
         string str = "/GameScene/Tower/";
-        //µÚÒ»¸öÅÚÌ¨
+        //ç¬¬ä¸€ä¸ªç‚®å°
         string str_1 = str + to_string(tower_available[0]) + "/";
         if (game_money < getMoney(tower_available[0])) {
             sprite_1->setTexture(str_1 + "CanClick0.PNG");
@@ -763,7 +792,7 @@ void GameMenu::build(pos position, int tower_available[]) {
         sprite_1->setPosition(Vec2(vec.x - sprite_1->getContentSize().width / 2,
             vec.y + sprite_1->getContentSize().height));
         touch_layer->addChild(sprite_1);
-        //µÚ¶ş¸öÅÚÌ¨
+        //ç¬¬äºŒä¸ªç‚®å°
         string str_2 = str + to_string(tower_available[1]) + "/";
         if (game_money < getMoney(tower_available[1])) {
             sprite_2->setTexture(str_2 + "CanClick0.PNG");
@@ -778,7 +807,7 @@ void GameMenu::build(pos position, int tower_available[]) {
     }
     else if (tower_available[2] != -1) {
         string str = "/GameScene/Tower/";
-        //µÚÒ»¸öÅÚÌ¨
+        //ç¬¬ä¸€ä¸ªç‚®å°
         string str_1 = str + to_string(tower_available[0]) + "/";
         if (game_money < getMoney(tower_available[0])) {
             sprite_1->setTexture(str_1 + "CanClick0.PNG");
@@ -790,7 +819,7 @@ void GameMenu::build(pos position, int tower_available[]) {
         sprite_1->setPosition(Vec2(vec.x - sprite_1->getContentSize().width,
             vec.y + sprite_1->getContentSize().height));
         touch_layer->addChild(sprite_1);
-        //µÚ¶ş¸öÅÚÌ¨
+        //ç¬¬äºŒä¸ªç‚®å°
         string str_2 = str + to_string(tower_available[1]) + "/";
         if (game_money < getMoney(tower_available[1])) {
             sprite_2->setTexture(str_2 + "CanClick0.PNG");
@@ -802,7 +831,7 @@ void GameMenu::build(pos position, int tower_available[]) {
         sprite_2->setPosition(Vec2(vec.x,
             vec.y + sprite_2->getContentSize().height));
         touch_layer->addChild(sprite_2);
-        //µÚÈı¸öÅÚÌ¨
+        //ç¬¬ä¸‰ä¸ªç‚®å°
         string str_3 = str + to_string(tower_available[2]) + "/";
         if (game_money < getMoney(tower_available[2])) {
             sprite_3->setTexture(str_3 + "CanClick0.PNG");
@@ -815,19 +844,19 @@ void GameMenu::build(pos position, int tower_available[]) {
             vec.y + sprite_3->getContentSize().height));
         touch_layer->addChild(sprite_3);
     }
-    //´¥Ãş²ã
+    //è§¦æ‘¸å±‚
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     listener->onTouchBegan = [](Touch* touch, Event* event) {
         return true;
         };
     listener->onTouchEnded = [this, sprite, sprite_1, sprite_2, sprite_3, touch_layer, position, tower_available](Touch* touch, Event* event) {
-        //Èô°´ÏÂÎ»ÖÃÔÚµÚÒ»¸öÅÚËşÍ¼±êÄÚ
+        //è‹¥æŒ‰ä¸‹ä½ç½®åœ¨ç¬¬ä¸€ä¸ªç‚®å¡”å›¾æ ‡å†…
         if (touch->getLocation().x >= sprite_1->getPosition().x - sprite_1->getContentSize().width / 2 &&
             touch->getLocation().x <= sprite_1->getPosition().x + sprite_1->getContentSize().width / 2 &&
             touch->getLocation().y >= sprite_1->getPosition().y - sprite_1->getContentSize().height / 2 &&
             touch->getLocation().y <= sprite_1->getPosition().y + sprite_1->getContentSize().height / 2) {
-            if (game_money >= getMoney(tower_available[0])) {//ÈôÇ®¹»£¬Ôò½¨Ôì
+            if (game_money >= getMoney(tower_available[0])) {//è‹¥é’±å¤Ÿï¼Œåˆ™å»ºé€ 
                 tower_map[position.i][position.j] = new Tower;
                 tower_map[position.i][position.j]->build_tower(position, tower_available[0], this);
                 game_money -= getMoney(tower_available[0]);
@@ -836,12 +865,12 @@ void GameMenu::build(pos position, int tower_available[]) {
                 this->removeChild(touch_layer);
             }
         }
-        else if (//Èô°´ÏÂÎ»ÖÃÔÚµÚ¶ş¸öÅÚËşÍ¼±êÄÚ
+        else if (//è‹¥æŒ‰ä¸‹ä½ç½®åœ¨ç¬¬äºŒä¸ªç‚®å¡”å›¾æ ‡å†…
             touch->getLocation().x >= sprite_2->getPosition().x - sprite_2->getContentSize().width / 2 &&
             touch->getLocation().x <= sprite_2->getPosition().x + sprite_2->getContentSize().width / 2 &&
             touch->getLocation().y >= sprite_2->getPosition().y - sprite_2->getContentSize().height / 2 &&
             touch->getLocation().y <= sprite_2->getPosition().y + sprite_2->getContentSize().height / 2) {
-            if (game_money >= getMoney(tower_available[1])) {//ÈôÇ®¹»£¬Ôò½¨Ôì
+            if (game_money >= getMoney(tower_available[1])) {//è‹¥é’±å¤Ÿï¼Œåˆ™å»ºé€ 
                 tower_map[position.i][position.j] = new Tower;
                 tower_map[position.i][position.j]->build_tower(position, tower_available[1], this);
                 game_money -= getMoney(tower_available[1]);
@@ -850,13 +879,13 @@ void GameMenu::build(pos position, int tower_available[]) {
                 this->removeChild(touch_layer);
             }
         }
-        else if (//Èô°´ÏÂÎ»ÖÃÔÚµÚÈı¸öÅÚËşÍ¼±êÄÚ
+        else if (//è‹¥æŒ‰ä¸‹ä½ç½®åœ¨ç¬¬ä¸‰ä¸ªç‚®å¡”å›¾æ ‡å†…
             tower_available[2] != -1 &&
             touch->getLocation().x >= sprite_3->getPosition().x - sprite_3->getContentSize().width / 2 &&
             touch->getLocation().x <= sprite_3->getPosition().x + sprite_3->getContentSize().width / 2 &&
             touch->getLocation().y >= sprite_3->getPosition().y - sprite_3->getContentSize().height / 2 &&
             touch->getLocation().y <= sprite_3->getPosition().y + sprite_3->getContentSize().height / 2) {
-            if (game_money >= getMoney(tower_available[2])) {//ÈôÇ®¹»£¬Ôò½¨Ôì
+            if (game_money >= getMoney(tower_available[2])) {//è‹¥é’±å¤Ÿï¼Œåˆ™å»ºé€ 
                 tower_map[position.i][position.j] = new Tower;
                 tower_map[position.i][position.j]->build_tower(position, tower_available[2], this);
                 game_money -= getMoney(tower_available[2]);
@@ -866,18 +895,18 @@ void GameMenu::build(pos position, int tower_available[]) {
             }
         }
         else {
-            //Èô°´ÏÂÎ»ÖÃ²»ÔÚÍ¼±êÄÚ
+            //è‹¥æŒ‰ä¸‹ä½ç½®ä¸åœ¨å›¾æ ‡å†…
             sprite->setVisible(false);
             this->removeChild(touch_layer);
         }
         };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, touch_layer);
 }
-//¶Ô·ÀÓùËşµÄ²Ù×÷
+//å¯¹é˜²å¾¡å¡”çš„æ“ä½œ
 void GameMenu::tower_operations(pos position) {
-    //·ÀÓùËşĞÅÏ¢
+    //é˜²å¾¡å¡”ä¿¡æ¯
     if (tower_map[position.i][position.j] == nullptr) {
-        if (game_map[position.i][position.j] == TOWER) game_map[position.i][position.j] = EMPTY;//±ê¼ÇÓëÊµ¼Ê²»·û£¬¾ÀÕı
+        if (game_map[position.i][position.j] == TOWER) game_map[position.i][position.j] = EMPTY;//æ ‡è®°ä¸å®é™…ä¸ç¬¦ï¼Œçº æ­£
         return;
     }
     float range_scale = tower_map[position.i][position.j]->get_attack_range();
@@ -885,16 +914,16 @@ void GameMenu::tower_operations(pos position) {
     int level_up_money = tower_map[position.i][position.j]->get_level_up_money();
     int sell_money = tower_map[position.i][position.j]->get_sell_money();
     vec2 vec = trans_ij_to_xy(position);
-    //ÕÚÕÖ²ã
+    //é®ç½©å±‚
     auto touch_layer = Layer::create();
     this->addChild(touch_layer);
-    //·¶Î§ÏÔÊ¾
+    //èŒƒå›´æ˜¾ç¤º
     auto range = Sprite::create("/GameScene/Tower/AttackRange.PNG");
     range->setScale(range_scale);
     range->setPosition(Vec2(vec.x,
         vec.y));
     touch_layer->addChild(range);
-    //Éı¼¶ÏÔÊ¾
+    //å‡çº§æ˜¾ç¤º
     auto level_up = Sprite::create("/GameScene/Tower/Btn_CanUpLevel.png");
     if (game_money < level_up_money) {
         level_up->setTexture("/GameScene/Tower/Btn_CantUpLevel.png");
@@ -915,7 +944,7 @@ void GameMenu::tower_operations(pos position) {
     }
 
     if (game_map[position.i][position.j] == TOWER) {
-        //³öÊÛÏÔÊ¾
+        //å‡ºå”®æ˜¾ç¤º
         auto sell = Sprite::create("/GameScene/Tower/Btn_SellTower.png");
         sell->setPosition(Vec2(vec.x,
             vec.y - range->getContentSize().height / 2));
@@ -933,7 +962,7 @@ void GameMenu::tower_operations(pos position) {
             return true;
             };
         listener->onTouchEnded = [=](Touch* touch, Event* event) {
-            //Èôµã»÷Éı¼¶°´Å¥
+            //è‹¥ç‚¹å‡»å‡çº§æŒ‰é’®
             if (touch->getLocation().x >= level_up->getPosition().x - level_up->getContentSize().width / 2 &&
                 touch->getLocation().x <= level_up->getPosition().x + level_up->getContentSize().width / 2 &&
                 touch->getLocation().y >= level_up->getPosition().y - level_up->getContentSize().height / 2 &&
@@ -945,7 +974,7 @@ void GameMenu::tower_operations(pos position) {
                     this->removeChild(touch_layer);
                 }
             }
-            else if (//Èôµã»÷³öÊÛ°´Å¥
+            else if (//è‹¥ç‚¹å‡»å‡ºå”®æŒ‰é’®
                 touch->getLocation().x >= sell->getPosition().x - sell->getContentSize().width / 2 &&
                 touch->getLocation().x <= sell->getPosition().x + sell->getContentSize().width / 2 &&
                 touch->getLocation().y >= sell->getPosition().y - sell->getContentSize().height / 2 &&
@@ -969,7 +998,7 @@ void GameMenu::tower_operations(pos position) {
             return true;
             };
         listener->onTouchEnded = [=](Touch* touch, Event* event) {
-            //Èôµã»÷Éı¼¶°´Å¥
+            //è‹¥ç‚¹å‡»å‡çº§æŒ‰é’®
             if (touch->getLocation().x >= level_up->getPosition().x - level_up->getContentSize().width / 2 &&
                 touch->getLocation().x <= level_up->getPosition().x + level_up->getContentSize().width / 2 &&
                 touch->getLocation().y >= level_up->getPosition().y - level_up->getContentSize().height / 2 &&

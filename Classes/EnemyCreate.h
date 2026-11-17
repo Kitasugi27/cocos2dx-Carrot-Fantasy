@@ -1,4 +1,4 @@
-#include "cocos2d.h"
+﻿#include "cocos2d.h"
 #include"GameScene.h"
 #include<vector>
 using namespace std; 
@@ -20,6 +20,7 @@ public:
 	virtual void update(float dt);
 
 	void SetLevel(int level_selection);
+	static void reset_static_state();
 	void monster_appear(int Type);
 	void barrier_appear(int Type, pos position);
 	void barrier_appear(int Type, pos position_l, pos position_r);

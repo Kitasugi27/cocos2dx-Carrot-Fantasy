@@ -1,4 +1,4 @@
-#include "enemy.h"
+ï»¿#include "enemy.h"
 #include"sound&music.h"
 #include"GameData.h"
 #include"GameScene.h"
@@ -16,15 +16,19 @@ extern vector<LevelPath>levelPath;
 extern int carrot_hp;
 extern char game_map[7][12];
 extern int money_total;
-extern int game_money;//½ðÇ®
-extern int monster_total;//»÷É±¹ÖÎï×ÜÊý
-extern int boss_total;//»÷É±boss×ÜÊý
-extern int barrier_total;//´Ý»ÙÕÏ°­×ÜÊý
+extern int game_money;//ï¿½ï¿½Ç®
+extern int monster_total;//ï¿½ï¿½É±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+extern int boss_total;//ï¿½ï¿½É±bossï¿½ï¿½ï¿½ï¿½
+extern int barrier_total;//ï¿½Ý»ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½
 extern vector<Enemy*>monster;
 extern vector<Enemy*>barrier;
 extern Enemy* destination;
+
+static int enemy_appear_waves = 0;
+static vec2 enemy_start_position = { 0, 0 };
+static unsigned int next_enemy_id = 1;
 using namespace cocos2d::ui;
-//²»ÊÇcocos×Ô´ø
+//ï¿½ï¿½ï¿½ï¿½cocosï¿½Ô´ï¿½
 
 
 
@@ -33,12 +37,24 @@ Sprite* Enemy::createSprite()
 	return Enemy::create();
 }
 
+void Enemy::reset_static_state()
+{
+	enemy_appear_waves = game_waves;
+	if (!levelPath.empty()) {
+		enemy_start_position = trans_ij_to_xy(levelPath[0].point);
+	}
+	else {
+		enemy_start_position = { 0, 0 };
+	}
+}
+
 bool Enemy::init()
 {
 	if (!Sprite::init()) {
 		return false;
 	}
-	
+	enemy.id = next_enemy_id++;
+	enemy.alive = true;
 	this->scheduleUpdate();
 	return true;
 }
@@ -46,7 +62,7 @@ bool Enemy::init()
 void Enemy::setType(int selection)
 {
 	enemy.type = selection;
-	//0-8 0ÎªÆÕÍ¨¹Ö 1Îª¸ßËÙ¹Ö 2Îª¾ÞÐÍ¹Ö 34ÎªÒ»¸ñÌùÍ¼ 56Îª¶þ¸ñÌùÍ¼ 78ÎªËÄ¸ñÌùÍ¼
+	//0-8 0Îªï¿½ï¿½Í¨ï¿½ï¿½ 1Îªï¿½ï¿½ï¿½Ù¹ï¿½ 2Îªï¿½ï¿½ï¿½Í¹ï¿½ 34ÎªÒ»ï¿½ï¿½ï¿½ï¿½Í¼ 56Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ 78Îªï¿½Ä¸ï¿½ï¿½ï¿½Í¼
 	string picture[] = { "normal01-2.PNG","fast01-2.PNG","huge01-2.PNG","One1.PNG","One2.PNG","Two1.PNG","Two2.PNG","Four1.PNG","Four2.PNG" };
 	string pic[] = { "normal01-1.PNG","fast01-1.PNG","huge01-1.PNG" };
 	string road1 = BARRIER_BASE_PICTURE;
@@ -162,8 +178,8 @@ void Enemy::update(float dt)
 		this->getChildByName("Selected")->setVisible(false);
 	}
 
-	static int appear_waves = game_waves;
-	//¼õËÙ×´Ì¬Ê±¼äÀÛ¼ÆÅÐ¶Ï
+	int& appear_waves = enemy_appear_waves;
+	//ï¿½ï¿½ï¿½ï¿½×´Ì¬Ê±ï¿½ï¿½ï¿½Û¼ï¿½ï¿½Ð¶ï¿½
 	if (enemy.origin_speed > enemy.speed) {
 		enemy.time += dt * (1 + if_speed_up) * (1 - if_pause) * 100;
 		if (enemy.time > 300) {
@@ -172,12 +188,12 @@ void Enemy::update(float dt)
 			enemy.speed = enemy.origin_speed;
 		}
 	}
-	//¶ÔÓÚÒÆ¶¯µÄÅÐ¶Ï
-	if (if_pause == 0&&enemy.speed>0) {//ÎÞÔÝÍ£ºÍËÙ¶È´óÓÚ0(¼´·ÇÕÏ°­Îï)Ôò¶¯
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+	if (if_pause == 0&&enemy.speed>0) {//ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Ù¶È´ï¿½ï¿½ï¿½0(ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½)ï¿½ï¿½
 		int x = this->getPositionX();
 		int y = this->getPositionY();
-		static vec2 startPosition = trans_ij_to_xy(levelPath[0].point);
-		//³ö³¡¶¯»­
+		vec2& startPosition = enemy_start_position;
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		int ix = 0, iy = 0;
 		if (levelPath[enemy.count].direction == 's') {
 			ix = 0;
@@ -233,10 +249,14 @@ void Enemy::update(float dt)
 				destination = nullptr;
 			}
 			if (enemy.type <= 2) {
-				monster.erase(find_if(monster.begin(), monster.end(), [this](const Enemy* enemy) {return enemy == this; }));
+				this->set_alive(false);
+				auto it = find_if(monster.begin(), monster.end(), [this](const Enemy* e) {return e == this; });
+				if (it != monster.end()) monster.erase(it);
 			}
 			else {
-				barrier.erase(find_if(barrier.begin(), barrier.end(), [this](const Enemy* enemy) {return enemy == this; }));
+				this->set_alive(false);
+				auto it = find_if(barrier.begin(), barrier.end(), [this](const Enemy* e) {return e == this; });
+				if (it != barrier.end()) barrier.erase(it);
 			}
 			this->removeFromParent();
 			return;
@@ -246,7 +266,7 @@ void Enemy::update(float dt)
 
 	}
 
-	//ÏÔÊ¾ÑªÌõ
+	//ï¿½ï¿½Ê¾Ñªï¿½ï¿½
 	if (enemy.hp > 0&&enemy.hp<enemy.full_hp) {
 		int special_hp=0;
 		auto hpHolder = Sprite::create("/Enemy/monster/HpHolder.PNG");
@@ -269,7 +289,7 @@ void Enemy::update(float dt)
 		hpSlider->setPosition((Vec2(this->getContentSize().width / 2-float(hpHolder->getContentSize().width)*48/52*0.5*(1+special_hp), this->getContentSize().height + 10)));
 		this->addChild(hpSlider, 2);
 	}
-	//Ã»ÑªÁË¾ÍÏûÊ§
+	//Ã»Ñªï¿½Ë¾ï¿½ï¿½ï¿½Ê§
 	else if(enemy.hp<=0){
 		if (enemy.type == NORMAL) {
 			normal_dead_sound_effect();
@@ -320,10 +340,14 @@ void Enemy::update(float dt)
 			}
 		}
 		if (enemy.type <= 2) {
-			monster.erase(find_if(monster.begin(), monster.end(), [this](const Enemy* enemy) {return enemy == this; }));
+			this->set_alive(false);
+			auto it = find_if(monster.begin(), monster.end(), [this](const Enemy* e) {return e == this; });
+			if (it != monster.end()) monster.erase(it);
 		}
 		else {
-			barrier.erase(find_if(barrier.begin(), barrier.end(), [this](const Enemy* enemy) {return enemy == this; }));
+			this->set_alive(false);
+			auto it = find_if(barrier.begin(), barrier.end(), [this](const Enemy* e) {return e == this; });
+			if (it != barrier.end()) barrier.erase(it);
 		}
 		this->removeFromParent();
 		return;
@@ -407,10 +431,10 @@ bool Enemy::declineHp(Tower_information tower, int op)
 	return false;
 }
 
-//ÅÐ¶ÏµÐÈËÊÇ·ñÈÔÔÚ³¡£º±»»÷É±ºó»á±»´Ó monster/barrier ÖÐÒÆ³ý£¬
-//×Óµ¯/·ÖÁÑÉËº¦ÔÚÑÓ³Ù»Øµ÷Àï±ØÐëÏÈÐ£Ñé£¬·ñÔò¾ÍÊÇÐü¿ÕÖ¸Õë¡£
+//ï¿½Ð¶Ïµï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½ï¿½á±»ï¿½ï¿½ monster/barrier ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½
+//ï¿½Óµï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½ï¿½Ó³Ù»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½é£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë¡£
 bool enemy_is_alive(Enemy* e) {
-	if (e == nullptr) return false;
+	if (e == nullptr || !e->is_alive()) return false;
 	return find(monster.begin(), monster.end(), e) != monster.end()
 		|| find(barrier.begin(), barrier.end(), e) != barrier.end();
 }

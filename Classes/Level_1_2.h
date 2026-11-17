@@ -1,4 +1,4 @@
-#ifndef __Level_1_2_LAYER_H__
+﻿#ifndef __Level_1_2_LAYER_H__
 #define __Level_1_2_LAYER_H__
 
 #include "cocos2d.h"

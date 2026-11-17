@@ -1,4 +1,4 @@
-#include"Tower.h"
+ï»¿#include"Tower.h"
 #include"sound&music.h"
 #include"enemy.h"
 #include <string>
@@ -6,14 +6,14 @@
 USING_NS_CC;
 using namespace cocos2d::ui;
 
-extern Tower* tower_map[7][12];//¼ÇÂ¼µØÍ¼ÉÏµÄÅÚÌ¨ÐÅÏ¢
-extern char game_map[7][12];//¸¨ÖúµØÍ¼Êý×é
-extern int if_speed_up;//ÊÇ·ñ¼ÓËÙ
-extern int if_pause;//ÊÇ·ñÔÝÍ£
-extern int carrot_hp;//¼ÇÂ¼ÂÜ²·ÑªÁ¿
-extern int carrot_level;//¼ÇÂ¼ÂÜ²·µÈ¼¶
-extern pos carrot_position;//¼ÇÂ¼ÂÜ²·Î»ÖÃ
-extern vector<Enemy*> monster;//´¢´æ¹ÖÎï
+extern Tower* tower_map[7][12];//ï¿½ï¿½Â¼ï¿½ï¿½Í¼ï¿½Ïµï¿½ï¿½ï¿½Ì¨ï¿½ï¿½Ï¢
+extern char game_map[7][12];//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
+extern int if_speed_up;//ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
+extern int if_pause;//ï¿½Ç·ï¿½ï¿½ï¿½Í£
+extern int carrot_hp;//ï¿½ï¿½Â¼ï¿½Ü²ï¿½Ñªï¿½ï¿½
+extern int carrot_level;//ï¿½ï¿½Â¼ï¿½Ü²ï¿½ï¿½È¼ï¿½
+extern pos carrot_position;//ï¿½ï¿½Â¼ï¿½Ü²ï¿½Î»ï¿½ï¿½
+extern vector<Enemy*> monster;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 /*
 Sprite* Bullet::createSprite()
@@ -37,7 +37,7 @@ void Bullet::update(float dt)
 			x = Target->getPositionX() - this->getPositionX();
 			y = Target->getPositionY() - this->getPositionY();
 			r = -atan2f(y, x) / 3.14159 * 180;
-			/*ÖÐÐÄ¾àÀëÐ¡ÓÚµÈÓÚÄ¿±ê´óÐ¡£¬ÊÓÎª»÷ÖÐ
+			/*ï¿½ï¿½ï¿½Ä¾ï¿½ï¿½ï¿½Ð¡ï¿½Úµï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 			((this->getPosition().x - Target->getPosition().x) * (this->getPosition().x - Target->getPosition().x)
 				+ (this->getPosition().y - Target->getPosition().y) * (this->getPosition().y - Target->getPosition().y))
 				<= ((Target->getContentSize().width / 2) * (Target->getContentSize().width / 2)
@@ -71,7 +71,7 @@ bool Tower_body::init()
 	return true;
 }
 
-/*ÖØÐ´updateº¯Êý*/
+/*ï¿½ï¿½Ð´updateï¿½ï¿½ï¿½ï¿½*/
 void Tower_body::update(float dt)
 {
 	if (if_pause == 0) {
@@ -110,15 +110,16 @@ void Tower_body::update(float dt)
 		if (target != nullptr) {
 			if (time >= (if_speed_up == 0 ? (4 / tower_information.attack_speed) : (2 / tower_information.attack_speed))) {
 				time = 0;
-				Tower_information info = tower_information;//¸±±¾£º»Øµ÷Àï²»ÄÜÔÙÍ¨¹ý this ·ÃÎÊ£¨¿ÉÄÜÒÑÂôËþ£©
+				Tower_information info = tower_information;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï²»ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ this ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				Node* this_layer = this->getParent();
 				Layer* ThisLayer = static_cast<Layer*>(this_layer);
-				/*¹¥»÷Ç°Ò¡¶¯»­*/
+				/*ï¿½ï¿½ï¿½ï¿½Ç°Ò¡ï¿½ï¿½ï¿½ï¿½*/
 				float dx, dy, r;
 				dx = target->getPosition().x - my_position.x;
 				dy = target->getPosition().y - my_position.y;
 				r = -atan2f(dy, dx) / 3.14159 * 180;
 				string str[4] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" };
+				const unsigned int targetId = target->get_id();
 
 				if (tower_information.name_tag == Tower_Bottle) {
 					bottle_atk_sound_effect();
@@ -166,8 +167,8 @@ void Tower_body::update(float dt)
 						});
 
 					auto attacked = CallFunc::create([=]() {
-						//Ä¿±ê¿ÉÄÜÔÚ×Óµ¯·ÉÐÐÍ¾ÖÐÒÑ±»»÷É±£¬Ö±½Ó½âÒýÓÃ»áÉÁÍË
-						if (enemy_is_alive(target))
+						//Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½ï¿½É±ï¿½ï¿½Ö±ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
+						if (enemy_is_alive(target) && target->get_id() == targetId)
 							target->declineHp(info, 0);
 						});
 
@@ -178,7 +179,7 @@ void Tower_body::update(float dt)
 				}
 				else if (tower_information.name_tag == Tower_Shit) {
 					shit_atk_sound_effect();
-					//ÀûÓÃÖ¡¶¯»­Íê³É¹¥»÷¶¯»­
+					//ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					auto atk_Effect = Sprite::create();
 					Vector<SpriteFrame*> frame;
 					switch (tower_information.level) {
@@ -223,8 +224,8 @@ void Tower_body::update(float dt)
 						});
 
 					auto attacked = CallFunc::create([=]() {
-						//Ä¿±ê¿ÉÄÜÔÚ×Óµ¯·ÉÐÐÍ¾ÖÐÒÑ±»»÷É±£¬Ö±½Ó½âÒýÓÃ»áÉÁÍË
-						if (enemy_is_alive(target))
+						//Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½ï¿½É±ï¿½ï¿½Ö±ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
+						if (enemy_is_alive(target) && target->get_id() == targetId)
 							target->declineHp(info, 0);
 						});
 
@@ -235,7 +236,7 @@ void Tower_body::update(float dt)
 				}
 				else if (tower_information.name_tag == Tower_Star) {
 					star_atk_sound_effect();
-					//ÀûÓÃÖ¡¶¯»­Íê³É¹¥»÷¶¯»­
+					//ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 					auto atk_Effect = Sprite::create();
 					Vector<SpriteFrame*> frame;
 					switch (tower_information.level) {
@@ -281,14 +282,19 @@ void Tower_body::update(float dt)
 						});
 
 					auto attacked = CallFunc::create([=]() {
-						//Ä¿±ê¿ÉÄÜÔÚ×Óµ¯·ÉÐÐÍ¾ÖÐÒÑ±»»÷É±£¬Ö±½Ó½âÒýÓÃ»áÉÁÍË
-						if (!enemy_is_alive(target)) return;
+						//Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½ï¿½Ñ±ï¿½ï¿½ï¿½É±ï¿½ï¿½Ö±ï¿½Ó½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
+						if (!enemy_is_alive(target) || target->get_id() != targetId) return;
 						Vec2 devided = target->getPosition();
 						if (target->declineHp(info, 0)) {
-							//declineHp ÄÚ²¿»á erase monster£¬±ØÐë±éÀú¸±±¾£¬·ñÔòµü´úÆ÷Ê§Ð§
+							//declineHp ï¿½Ú²ï¿½ï¿½ï¿½ erase monsterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§Ð§
 							vector<Enemy*> around = monster;
+							vector<unsigned int> aroundIds;
 							for (Enemy* enemy : around) {
-								if (!enemy_is_alive(enemy)) continue;
+								aroundIds.push_back(enemy->get_id());
+							}
+							for (size_t i = 0; i < around.size(); ++i) {
+								Enemy* enemy = around[i];
+								if (!enemy_is_alive(enemy) || enemy->get_id() != aroundIds[i]) continue;
 								if (((devided.x - enemy->getPositionX()) * (devided.x - enemy->getPositionX()) +
 									(devided.y - enemy->getPositionY()) * (devided.y - enemy->getPositionY()))
 									<= (160 * 160) * (info.attack_range + 1) / 2)
@@ -309,7 +315,7 @@ void Tower_body::update(float dt)
 	}
 }
 
-/*½¨ÔìÅÚÌ¨*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨*/
 void Tower::build_tower(pos position, int tag, cocos2d::Layer* this_layer)
 {
 	if (tag <= 4) {
@@ -351,7 +357,7 @@ void Tower::build_tower(pos position, int tag, cocos2d::Layer* this_layer)
 		this_layer->addChild(TowerBody);
 		tower_map[position.i][position.j] = this;
 
-		//ÀûÓÃÖ¡¶¯»­Íê³É½¨ÔìÌØÐ§
+		//ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§
 		auto Effect = Sprite::create();
 		Vector<SpriteFrame*> frame;
 		frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_1.PNG", Rect(0, 0, 161, 133)));
@@ -367,7 +373,7 @@ void Tower::build_tower(pos position, int tag, cocos2d::Layer* this_layer)
 	}
 }
 
-/*Éý¼¶ÅÚÌ¨*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨*/
 void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 {
 	vec2 vec = trans_ij_to_xy(position);
@@ -377,7 +383,7 @@ void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 		if (this->get_level() < Max_Level) {
 			string str[4] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" };
 
-			/*¸üÐÂ»ù±¾ÐÅÏ¢*/
+			/*ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢*/
 			TowerBody->tower_information.value += get_level_up_money();
 			TowerBody->tower_information.level++;
 			TowerBody->tower_information.attack *= 2;
@@ -389,7 +395,7 @@ void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 
 			//TowerBody->tower_information = tower_map[position.i][position.j];
 
-			/*¸üÐÂ»­Ãæ*/
+			/*ï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½*/
 			switch (TowerBody->tower_information.name_tag) {
 				case 1:
 					TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID1_11.PNG");
@@ -448,7 +454,7 @@ void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 		carrot_level++;
 		carrot_hp += 2;
 	}
-	//ÀûÓÃÖ¡¶¯»­Íê³ÉÉý¼¶ÌØÐ§
+	//ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§
 	auto Effect_1 = Sprite::create();
 	Vector<SpriteFrame*> frame;
 	frame.pushBack(SpriteFrame::create("/Tower/Build/up1.png", Rect(0, 0, 77, 62)));
@@ -476,7 +482,7 @@ void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 
 }
 
-/*³öÊÛÅÚÌ¨*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨*/
 void Tower::sell_tower(pos position, cocos2d::Layer* this_layer)
 {
 	sell_sound_effect();
@@ -488,7 +494,7 @@ void Tower::sell_tower(pos position, cocos2d::Layer* this_layer)
 
 	tower_map[position.i][position.j] = nullptr;
 
-	//ÀûÓÃÖ¡¶¯»­Íê³ÉÉ¾³ýÌØÐ§
+	//ï¿½ï¿½ï¿½ï¿½Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½Ð§
 	vec2 vec = trans_ij_to_xy(position);
 	auto Effect = Sprite::create();
 	Vector<SpriteFrame*> frame;
@@ -506,7 +512,7 @@ void Tower::sell_tower(pos position, cocos2d::Layer* this_layer)
 	delete this;
 }
 
-/*»ñµÃ³öÊÛ¼Û¸ñ*/
+/*ï¿½ï¿½Ã³ï¿½ï¿½Û¼Û¸ï¿½*/
 int Tower::get_sell_money() 
 {
 	if (this != nullptr && TowerBody != nullptr)
@@ -515,7 +521,7 @@ int Tower::get_sell_money()
 		return 0;
 }
 
-/*»ñµÃ¹¥»÷·¶Î§*/
+/*ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½Î§*/
 float Tower::get_attack_range()
 {
 	if (this != nullptr && TowerBody != nullptr)
@@ -524,7 +530,7 @@ float Tower::get_attack_range()
 		return 1;
 }
 
-/*»ñµÃµÈ¼¶*/
+/*ï¿½ï¿½ÃµÈ¼ï¿½*/
 int Tower::get_level()
 {
 	if (this != nullptr && TowerBody != nullptr)
@@ -533,7 +539,7 @@ int Tower::get_level()
 		return 0;
 }
 
-/*»ñµÃÉý¼¶ËùÐè½ð±Ò*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 int Tower::get_level_up_money()
 {
 	if (this != nullptr && TowerBody != nullptr) {
@@ -546,7 +552,7 @@ int Tower::get_level_up_money()
 		return (carrot_level == 1 ? 500 : 1000);
 }
 
-/*»ñµÃ³õÊ¼½¨Ôì½ð±Ò*/
+/*ï¿½ï¿½Ã³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 int getMoney(int tag) {
 	return Tower_Value[tag - 1];
 }

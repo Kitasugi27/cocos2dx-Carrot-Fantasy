@@ -1,41 +1,41 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 #include "GameScene.h"
 
 #define BARRIER 0
 #define MONSTER 1
 
-#define BARRIER_ONE   1     //Ò»¸ñµÄÕÏ°­
-#define BARRIER_TWO   2     //Á½¸ñµÄÕÏ°­
-#define BARRIER_FOUR  4     //ËÄ¸ñµÄÕÏ°­
+#define BARRIER_ONE   1     //Ò»ï¿½ï¿½ï¿½ï¿½Ï°ï¿½
+#define BARRIER_TWO   2     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½
+#define BARRIER_FOUR  4     //ï¿½Ä¸ï¿½ï¿½ï¿½Ï°ï¿½
 
-#define BARRIER_HP_ONE     1600               //Ò»¸ñÕÏ°­µÄÑª
-#define BARRIER_HP_TWO     3 * BARRIER_HP_ONE //Á½¸ñÕÏ°­µÄÑª
-#define BARRIER_HP_FOUR    3 * BARRIER_HP_TWO //ËÄ¸ñÕÏ°­µÄÑª
+#define BARRIER_HP_ONE     1600               //Ò»ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½Ñª
+#define BARRIER_HP_TWO     3 * BARRIER_HP_ONE //ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½Ñª
+#define BARRIER_HP_FOUR    3 * BARRIER_HP_TWO //ï¿½Ä¸ï¿½ï¿½Ï°ï¿½ï¿½ï¿½Ñª
 
 #define BARRIER_COIN_ONE     50 
-#define BARRIER_COIN_TWO     2 * BARRIER_COIN_ONE //Á½¸ñÕÏ°­µÄÑª
-#define BARRIER_COIN_FOUR    2 * BARRIER_COIN_TWO //ËÄ¸ñÕÏ°­µÄÑª
+#define BARRIER_COIN_TWO     2 * BARRIER_COIN_ONE //ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½Ñª
+#define BARRIER_COIN_FOUR    2 * BARRIER_COIN_TWO //ï¿½Ä¸ï¿½ï¿½Ï°ï¿½ï¿½ï¿½Ñª
 
-#define MONSTER_NORMAL 0    //ÖÐµÈÑªÁ¿£¬ÖÐµÈËÙ¶È
-#define MONSTER_FAST   1    //µÍÑªÁ¿£¬¸ßËÙ¶È
-#define MONSTER_HUGE   2    //¸ßÑªÁ¿£¬ËÙ¶È½ÏµÍ
+#define MONSTER_NORMAL 0    //ï¿½Ðµï¿½Ñªï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ù¶ï¿½
+#define MONSTER_FAST   1    //ï¿½ï¿½Ñªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
+#define MONSTER_HUGE   2    //ï¿½ï¿½Ñªï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È½Ïµï¿½
 
-#define MONSTER_FAST_HP       20                     //¸ßËÙ¹ÖµÄ»ù´¡ÑªÁ¿
-#define MONSTER_NORMAL_HP     3 * MONSTER_FAST_HP    //ÆÕÍ¨¹ÖÑªÁ¿
-#define MONSTER_HUGE_HP       3 * MONSTER_NORMAL_HP  //¾ÞÐÍ¹ÖÑªÁ¿
+#define MONSTER_FAST_HP       20                     //ï¿½ï¿½ï¿½Ù¹ÖµÄ»ï¿½ï¿½ï¿½Ñªï¿½ï¿½
+#define MONSTER_NORMAL_HP     3 * MONSTER_FAST_HP    //ï¿½ï¿½Í¨ï¿½ï¿½Ñªï¿½ï¿½
+#define MONSTER_HUGE_HP       3 * MONSTER_NORMAL_HP  //ï¿½ï¿½ï¿½Í¹ï¿½Ñªï¿½ï¿½
 
-#define MONSTER_HUGE_SPEED    100                  //¾ÞÐÍ¹ÖÒÆ¶¯ËÙ¶È£¬ÎÏÅ£ÅÀ£¬´ý¸Ä¶¯£¡£¡£¡£¡
-#define MONSTER_NORMAL_SPEED  1.5*MONSTER_HUGE_SPEED     //Õý³£¹ÖÒÆËÙ
-#define MONSTER_FAST_SPEED    2*MONSTER_NORMAL_SPEED   //¸ßËÙ¹ÖÒÆËÙ
+#define MONSTER_HUGE_SPEED    100                  //ï¿½ï¿½ï¿½Í¹ï¿½ï¿½Æ¶ï¿½ï¿½Ù¶È£ï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define MONSTER_NORMAL_SPEED  1.5*MONSTER_HUGE_SPEED     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define MONSTER_FAST_SPEED    2*MONSTER_NORMAL_SPEED   //ï¿½ï¿½ï¿½Ù¹ï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define MONSTER_COIN_NORMAL   18                       //Õý³£¹ÖºÍ¸ßËÙ¹ÖµôÂä½ð±Ò
-#define MONSTER_COIN_HUGE     188                      //¾ÞÐÍ¹ÖµôÂä½ð±Ò
+#define MONSTER_COIN_NORMAL   18                       //ï¿½ï¿½ï¿½ï¿½ï¿½ÖºÍ¸ï¿½ï¿½Ù¹Öµï¿½ï¿½ï¿½ï¿½ï¿½
+#define MONSTER_COIN_HUGE     188                      //ï¿½ï¿½ï¿½Í¹Öµï¿½ï¿½ï¿½ï¿½ï¿½
 
-#define BARRIER_BASE_PICTURE  "/Enemy/barrier/0/"        //ÕÏ°­Â·¾¶
+#define BARRIER_BASE_PICTURE  "/Enemy/barrier/0/"        //ï¿½Ï°ï¿½Â·ï¿½ï¿½
 #define MONSTER_BASE_PICTURE  "/Enemy/monster/0/"
 
-//0-8 0ÎªÆÕÍ¨¹Ö 1Îª¸ßËÙ¹Ö 2Îª¾ÞÐÍ¹Ö 34ÎªÒ»¸ñÌùÍ¼ 56Îª¶þ¸ñÌùÍ¼ 78ÎªËÄ¸ñÌùÍ¼
+//0-8 0Îªï¿½ï¿½Í¨ï¿½ï¿½ 1Îªï¿½ï¿½ï¿½Ù¹ï¿½ 2Îªï¿½ï¿½ï¿½Í¹ï¿½ 34ÎªÒ»ï¿½ï¿½ï¿½ï¿½Í¼ 56Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ 78Îªï¿½Ä¸ï¿½ï¿½ï¿½Í¼
 #define NORMAL 0
 #define FLY 1
 #define BOSS 2
@@ -49,18 +49,20 @@
 
 struct Tower_information;
 struct Enemy_information {
-	int type;                                     //¼ÇÂ¼¹ÖÎïÖÖÀà
-	int hp;                                       //¼ÇÂ¼¹ÖÎïÑªÁ¿
-	int speed;                                    //¼ÇÂ¼¹ÖÎïÒÆ¶¯ËÙ¶È
-	int coin;                                     //Ð¯´øÂÜ²·±Ò
-	int damage;                                   //¶ÔÂÜ²·Ôì³ÉµÄÉËº¦
-	cocos2d::Sprite* enemy_picture;               //ÕÏ°­ÌùÍ¼
-	int count;                                    //×ß¹ýµÄ¸ñ×ÓÊý
-	double time = 0;                                 //¼ÇÂ¼ÉúÐ§Ê±¼ä
-	int origin_speed;                             //¼ÇÂ¼³£Ì¬»¯ËÙ¶È
-	int full_hp;                                  //¼ÇÂ¼ÂúÑªÑªÁ¿
-	float total_length = 0;						  //¼ÇÂ¼×ß¹ýµÄÂ·³Ì³¤¶È
-	pos position;                                 //¼ÇÂ¼ÕÏ°­ÎïÎ»ÖÃ
+	int type;                                     //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int hp;                                       //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ñªï¿½ï¿½
+	int speed;                                    //ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Ù¶ï¿½
+	int coin;                                     //Ð¯ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½
+	int damage;                                   //ï¿½ï¿½ï¿½Ü²ï¿½ï¿½ï¿½Éµï¿½ï¿½Ëºï¿½
+	cocos2d::Sprite* enemy_picture;               //ï¿½Ï°ï¿½ï¿½ï¿½Í¼
+	int count;                                    //ï¿½ß¹ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½
+	double time = 0;
+	unsigned int id = 0;
+	bool alive = true;                                 //ï¿½ï¿½Â¼ï¿½ï¿½Ð§Ê±ï¿½ï¿½
+	int origin_speed;                             //ï¿½ï¿½Â¼ï¿½ï¿½Ì¬ï¿½ï¿½ï¿½Ù¶ï¿½
+	int full_hp;                                  //ï¿½ï¿½Â¼ï¿½ï¿½ÑªÑªï¿½ï¿½
+	float total_length = 0;						  //ï¿½ï¿½Â¼ï¿½ß¹ï¿½ï¿½ï¿½Â·ï¿½Ì³ï¿½ï¿½ï¿½
+	pos position;                                 //ï¿½ï¿½Â¼ï¿½Ï°ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 		Enemy_information(int _type=0,int originalHp = 0, int originalSpeed = 200, int defeatedCoin = 0, int realDamage = 0, int n = 0,int currentTime=0,pos Position={0,0})
 		:type(_type),hp(originalHp), speed(originalSpeed), coin(defeatedCoin), damage(realDamage), count(n),origin_speed(originalSpeed),time(currentTime),full_hp(originalHp),position(Position)
 	{
@@ -83,6 +85,10 @@ public:
 	void setType(int selection);
 	void set_position(pos _position) { enemy.position = _position; }
 	bool declineHp(Tower_information tower, int op);
+	unsigned int get_id() const { return enemy.id; }
+	bool is_alive() const { return enemy.alive; }
+	void set_alive(bool value) { enemy.alive = value; }
+	static void reset_static_state();
 };
-//µÐÈËÊÇ·ñÈÔÈ»´æ»î£¨ÔÚ monster/barrier ÁÐ±íÖÐ£©£¬ÓÃÓÚ±ÜÃâ×Óµ¯ÃüÖÐÒÑËÀÍöµÐÈË
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½È»ï¿½ï¿½î£¨ï¿½ï¿½ monster/barrier ï¿½Ð±ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool enemy_is_alive(Enemy* e);

@@ -1,100 +1,107 @@
-#pragma once
+ï»¿#pragma once
 #include"AudioEngine.h"
-#include"CCUserDefault.h"
+#include"SaveManager.h"
 USING_NS_CC;
-//³õÊ¼»¯ÉùÒôÊý¾Ý£¬¼´±³¾°ÒôÀÖ+ÒôÐ§¾ùÎª´ò¿ª
+//åˆå§‹åŒ–å£°éŸ³æ•°æ®ï¼Œå³èƒŒæ™¯éŸ³ä¹+éŸ³æ•ˆå‡ä¸ºæ‰“å¼€
 static void init_sound() {
-	UserDefault::getInstance()->setIntegerForKey("sound_effect", 1);
-	UserDefault::getInstance()->setIntegerForKey("bg_music", 1);
+	SaveManager::getInstance()->setSoundEnabled(true);
+	SaveManager::getInstance()->setMusicEnabled(true);
 }
-//²¥·Å°´Å¥ÒôÐ§
+// Apply BGM according to current save settings (e.g. after data reset).
+static void apply_music_state() {
+	AudioEngine::stopAll();
+	if (SaveManager::getInstance()->getMusicEnabled()) {
+		AudioEngine::play2d("/sound/CarrotFantasy.mp3", true, 0.5f);
+	}
+}
+//æ’­æ”¾æŒ‰é’®éŸ³æ•ˆ
 static void button_sound_effect() {
-	//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å°´Å¥ÒôÐ§
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
+	//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾æŒ‰é’®éŸ³æ•ˆ
+	if (SaveManager::getInstance()->getSoundEnabled()) {
 		AudioEngine::play2d("/sound/button.mp3", false, 0.5f);
 	}
 }
-//²¥·Å·­Ò³ÒôÐ§
+//æ’­æ”¾ç¿»é¡µéŸ³æ•ˆ
 static void page_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å·­Ò³ÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾ç¿»é¡µéŸ³æ•ˆ
 		AudioEngine::play2d("/sound/page.mp3", false, 0.2f);
 	}
 }
-//²¥·Å½¨ÔìÒôÐ§
+//æ’­æ”¾å»ºé€ éŸ³æ•ˆ
 static void build_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å½¨ÔìÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾å»ºé€ éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/build_tower.mp3", false, 1.0f);
 	}
 }
-//²¥·Å³öÊÛÒôÐ§
+//æ’­æ”¾å‡ºå”®éŸ³æ•ˆ
 static void sell_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å³öÊÛÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾å‡ºå”®éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/sell_tower.mp3", false, 1.0f);
 	}
 }
-//²¥·ÅÉý¼¶ÒôÐ§
+//æ’­æ”¾å‡çº§éŸ³æ•ˆ
 static void uplevel_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·ÅÉý¼¶ÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾å‡çº§éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/uplevel_tower.mp3", false, 1.0f);
 	}
 }
-//²¥·ÅÐÇÐÇ¹¥»÷ÒôÐ§
+//æ’­æ”¾æ˜Ÿæ˜Ÿæ”»å‡»éŸ³æ•ˆ
 static void star_atk_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·ÅÐÇÐÇ¹¥»÷ÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾æ˜Ÿæ˜Ÿæ”»å‡»éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/star_atk.mp3", false, 1.0f);
 	}
 }
-//²¥·ÅÆ¿×Ó¹¥»÷ÒôÐ§
+//æ’­æ”¾ç“¶å­æ”»å‡»éŸ³æ•ˆ
 static void bottle_atk_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·ÅÆ¿×Ó¹¥»÷ÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾ç“¶å­æ”»å‡»éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/bottle_atk.mp3", false, 1.0f);
 	}
 }
-//²¥·Å·çÉÈ¹¥»÷ÒôÐ§
+//æ’­æ”¾é£Žæ‰‡æ”»å‡»éŸ³æ•ˆ
 static void fan_atk_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å·çÉÈ¹¥»÷ÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾é£Žæ‰‡æ”»å‡»éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/fan_atk.mp3", false, 1.0f);
 	}
 }
-//²¥·Å´ó±ã¹¥»÷ÒôÐ§
+//æ’­æ”¾å¤§ä¾¿æ”»å‡»éŸ³æ•ˆ
 static void shit_atk_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å´ó±ã¹¥»÷ÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾å¤§ä¾¿æ”»å‡»éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/shit_atk.mp3", false, 1.0f);
 	}
 }
-//²¥·ÅÂÜ²·±»³ÔÒôÐ§
+//æ’­æ”¾èåœè¢«åƒéŸ³æ•ˆ
 static void carrot_eaten_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·ÅÂÜ²·±»³ÔÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾èåœè¢«åƒéŸ³æ•ˆ
 		AudioEngine::play2d("/sound/carrot_eaten.mp3", false, 1.0f);
 	}
 }
-//²¥·ÅÆÕÍ¨¹ÖËÀÍöÒôÐ§
+//æ’­æ”¾æ™®é€šæ€ªæ­»äº¡éŸ³æ•ˆ
 static void normal_dead_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·ÅÆÕÍ¨¹ÖËÀÍöÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾æ™®é€šæ€ªæ­»äº¡éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/Land112.mp3", false, 1.0f);
 	}
 }
-//²¥·Å·ÉÐÐ¹ÖËÀÍöÒôÐ§
+//æ’­æ”¾é£žè¡Œæ€ªæ­»äº¡éŸ³æ•ˆ
 static void fly_dead_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·Å·ÉÐÐ¹ÖËÀÍöÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾é£žè¡Œæ€ªæ­»äº¡éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/Fly162.mp3", false, 1.0f);
 	}
 }
-//²¥·ÅbossËÀÍöÒôÐ§
+//æ’­æ”¾bossæ­»äº¡éŸ³æ•ˆ
 static void boss_dead_sound_effect() {
-	if (UserDefault::getInstance()->getIntegerForKey("sound_effect") == 1) {
-		//ÈôÒôÐ§´ò¿ª£¬Ôò²¥·ÅbossËÀÍöÒôÐ§
+	if (SaveManager::getInstance()->getSoundEnabled()) {
+		//è‹¥éŸ³æ•ˆæ‰“å¼€ï¼Œåˆ™æ’­æ”¾bossæ­»äº¡éŸ³æ•ˆ
 		AudioEngine::play2d("/sound/Fat141.mp3", false, 1.0f);
 	}
 }

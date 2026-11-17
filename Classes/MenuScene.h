@@ -1,4 +1,4 @@
-#ifndef __Menu_SCENE_H__
+﻿#ifndef __Menu_SCENE_H__
 #define __Menu_SCENE_H__
 
 #include "cocos2d.h"

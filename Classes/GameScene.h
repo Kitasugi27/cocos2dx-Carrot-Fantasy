@@ -1,4 +1,4 @@
-#ifndef __Game_SCENE_H__
+ï»¿#ifndef __Game_SCENE_H__
 #define __Game_SCENE_H__
 
 #include "cocos2d.h"
@@ -9,7 +9,7 @@
 #define TOWER 2
 #define CARROT 5
 
-//¹¤¾ßº¯Êý
+//ï¿½ï¿½ï¿½ßºï¿½ï¿½ï¿½
 struct pos {
     int i;
     int j;
@@ -18,52 +18,55 @@ struct vec2 {
     float x;
     float y;
 };
-//°ÑÃ¿¸ö¸ñµãµÄÊý×é×ø±ê×ª»»ÎªÊÀ½ç×ø±ê
+//ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 static vec2 trans_ij_to_xy(pos position) {
     vec2 vec;
     vec.x = 40 + position.j * 80;
     vec.y = 40 + (6 - position.i) * 80;
     return vec;
 }
-//°ÑÃ¿¸öÊÀ½ç×ø±ê×ª»»³É¶ÔÓ¦µÄ¸ñµãµÄÊý×é×ø±ê
+//ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½É¶ï¿½Ó¦ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 static pos trans_xy_to_ij(vec2 vec) {
     pos position;
     position.j = static_cast<int>((vec.x) / 80);
     position.i = 6 - static_cast<int>((vec.y) / 80);
     return position;
 }
-//Ã°ÏÕÄ£Ê½ÓÎÏ·Àà
+//Ã°ï¿½ï¿½Ä£Ê½ï¿½ï¿½Ï·ï¿½ï¿½
 class GameScene : public cocos2d::Scene
 {
 public:
-    //¹¹Ôìº¯Êý
+    //ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
     static cocos2d::Scene* createScene();
     virtual bool init();
     CREATE_FUNC(GameScene);
-    //ÖØÖÃ²Ëµ¥½çÃæ
+    //ï¿½ï¿½ï¿½Ã²Ëµï¿½ï¿½ï¿½ï¿½ï¿½
     void reset_menu();
 };
-//ÓÎÏ·²Ëµ¥Àà
+//ï¿½ï¿½Ï·ï¿½Ëµï¿½ï¿½ï¿½
 class GameMenu :public cocos2d::Layer 
 {
 public:
-    //¹¹Ôìº¯Êý
+    //ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
     static cocos2d::Layer* createLayer();
     virtual bool init();
     CREATE_FUNC(GameMenu);
-    //Ñ¡Ïî
+    //Ñ¡ï¿½ï¿½
     void options();
-    //¿ªÊ¼
+    //ï¿½ï¿½Ê¼
     void start();
-    //½¨Ôì
+    //ï¿½ï¿½ï¿½ï¿½
     void build(pos position, int tower_available[]);
-    //Éý¼¶É¾³ý
+    //ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
     void tower_operations(pos position);
-    //ÓÎÏ·Ê§°Ü
+    //ï¿½ï¿½Ï·Ê§ï¿½ï¿½
     void lose();
-    //ÓÎÏ·»ñÊ¤
+    //ï¿½ï¿½Ï·ï¿½ï¿½Ê¤
     void win();
-    //ÊµÊ±¸üÐÂ½ð±ÒµÈÊý¾Ý
+    //ÊµÊ±ï¿½ï¿½ï¿½Â½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½
     virtual void update(float dt);
+
+private:
+    void commitBattleStats(int money, int monsters, int bosses, int barriers);
 };
 #endif // __Game_SCENE_H__
